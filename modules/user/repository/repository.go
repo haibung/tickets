@@ -1,0 +1,72 @@
+package repository
+
+import (
+	"Users/evilkidz/Project/Golang/CMS/backend/models"
+	"Users/evilkidz/Project/Golang/CMS/backend/packages/logger"
+	"Users/evilkidz/Project/Golang/CMS/backend/packages/postgres"
+	"context"
+	"go.uber.org/fx"
+	"gorm.io/gorm"
+)
+
+type (
+	IUserInterface interface {
+		Create(ctx context.Context, reqData *models.User, tx *gorm.DB) (*int, error)
+		FindByID(ctx context.Context, reqData *models.User) (*models.User, error)
+		FindByEmail(ctx context.Context, reqData *models.User) (*models.User, error)
+	}
+
+	UserRepository struct {
+		fx.In
+		DB     *postgres.DB
+		Logger *logger.Logger
+	}
+)
+
+// NewRepository :
+func NewRepository(userRepository UserRepository) IUserInterface {
+	return &userRepository
+}
+
+// Create :
+func (receiver *UserRepository) Create(ctx context.Context, reqData *models.User, tx *gorm.DB) (*int, error) {
+	if err := tx.WithContext(ctx).Create(&reqData).Error; err != nil {
+		receiver.Logger.Error(err)
+		return nil, err
+	}
+
+	return &reqData.ID, nil
+}
+
+// FindByID :
+func (receiver *UserRepository) FindByID(ctx context.Context, reqData *models.User) (*models.User, error) {
+	user := new(models.User)
+
+	if err := receiver.DB.Gorm.WithContext(ctx).
+		Preload("FetchAllPermissionByRoleID.FetchFeatureByFeatureID").
+		Where(&models.User{
+			ID: reqData.ID,
+		}).
+		First(&user).Error; err != nil {
+		receiver.Logger.Error(err)
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// FindByEmail :
+func (receiver *UserRepository) FindByEmail(ctx context.Context, reqData *models.User) (*models.User, error) {
+	user := new(models.User)
+
+	if err := receiver.DB.Gorm.WithContext(ctx).
+		Where(&models.User{
+			Email: reqData.Email,
+		}).
+		First(&user).Error; err != nil {
+		receiver.Logger.Error(err)
+		return nil, err
+	}
+
+	return user, nil
+}
