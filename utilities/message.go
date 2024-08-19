@@ -12,6 +12,7 @@ const (
 	MinValueMust         = "%v must be minimal %v"
 	MaxValueMust         = "%v must be maximal %v"
 	DataNotFound         = "%v not found"
+	NumberNotValid       = "format harus berupa angka"
 	ToManyRequest        = "to many request"
 	InvalidAccessLogin   = "incorrect email or password"
 	//PasswordIncorret     = "kata sandi salah"

@@ -1,12 +1,14 @@
 package modules
 
 import (
-	auth "Users/evilkidz/Project/Golang/CMS/backend/modules/auth/route"
-	category "Users/evilkidz/Project/Golang/CMS/backend/modules/category/route"
-	content "Users/evilkidz/Project/Golang/CMS/backend/modules/content/route"
-	permission "Users/evilkidz/Project/Golang/CMS/backend/modules/permission/route"
-	role "Users/evilkidz/Project/Golang/CMS/backend/modules/role/route"
-	user "Users/evilkidz/Project/Golang/CMS/backend/modules/user/route"
+	auth "gitlab.com/tiketfest/backend/modules/auth/route"
+	category "gitlab.com/tiketfest/backend/modules/category/route"
+	content "gitlab.com/tiketfest/backend/modules/content/route"
+	permission "gitlab.com/tiketfest/backend/modules/permission/route"
+	role "gitlab.com/tiketfest/backend/modules/role/route"
+	transaction "gitlab.com/tiketfest/backend/modules/transaction/route"
+	transactionItem "gitlab.com/tiketfest/backend/modules/transactionItem/route"
+	user "gitlab.com/tiketfest/backend/modules/user/route"
 	"go.uber.org/fx"
 )
 
@@ -18,4 +20,6 @@ var AppRoute = fx.Options(
 	fx.Invoke(auth.NewRoute),
 	fx.Invoke(category.NewRoute),
 	fx.Invoke(content.NewRoute),
+	fx.Invoke(transaction.NewRoute),
+	fx.Invoke(transactionItem.NewRoute),
 )

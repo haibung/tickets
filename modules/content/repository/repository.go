@@ -1,11 +1,11 @@
 package repository
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/models"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/logger"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/paginate"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/postgres"
 	"context"
+	"gitlab.com/tiketfest/backend/models"
+	"gitlab.com/tiketfest/backend/packages/logger"
+	"gitlab.com/tiketfest/backend/packages/paginate"
+	"gitlab.com/tiketfest/backend/packages/postgres"
 	"go.uber.org/fx"
 	"gorm.io/gorm"
 	"strings"

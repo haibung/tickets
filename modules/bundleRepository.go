@@ -1,12 +1,14 @@
 package modules
 
 import (
-	category "Users/evilkidz/Project/Golang/CMS/backend/modules/category/repository"
-	content "Users/evilkidz/Project/Golang/CMS/backend/modules/content/repository"
-	feature "Users/evilkidz/Project/Golang/CMS/backend/modules/feature/repository"
-	permission "Users/evilkidz/Project/Golang/CMS/backend/modules/permission/repository"
-	role "Users/evilkidz/Project/Golang/CMS/backend/modules/role/repository"
-	user "Users/evilkidz/Project/Golang/CMS/backend/modules/user/repository"
+	category "gitlab.com/tiketfest/backend/modules/category/repository"
+	content "gitlab.com/tiketfest/backend/modules/content/repository"
+	feature "gitlab.com/tiketfest/backend/modules/feature/repository"
+	permission "gitlab.com/tiketfest/backend/modules/permission/repository"
+	role "gitlab.com/tiketfest/backend/modules/role/repository"
+	transaction "gitlab.com/tiketfest/backend/modules/transaction/repository"
+	transactionItem "gitlab.com/tiketfest/backend/modules/transactionItem/repository"
+	user "gitlab.com/tiketfest/backend/modules/user/repository"
 	"go.uber.org/fx"
 )
 
@@ -18,4 +20,6 @@ var AppRepository = fx.Options(
 	fx.Provide(feature.NewRepository),
 	fx.Provide(category.NewRepository),
 	fx.Provide(content.NewRepository),
+	fx.Provide(transaction.NewRepository),
+	fx.Provide(transactionItem.NewRepository),
 )

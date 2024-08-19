@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/config"
+	"gitlab.com/tiketfest/backend/config"
 
 	"github.com/spf13/cobra"
 )

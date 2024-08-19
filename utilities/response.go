@@ -1,8 +1,8 @@
 package utilities
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/paginate"
 	"github.com/labstack/echo/v4"
+	"gitlab.com/tiketfest/backend/packages/paginate"
 )
 
 type (

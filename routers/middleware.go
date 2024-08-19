@@ -1,13 +1,13 @@
 package routers
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/config"
-	"Users/evilkidz/Project/Golang/CMS/backend/models"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/jwt"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/permission"
-	"Users/evilkidz/Project/Golang/CMS/backend/utilities"
 	"context"
 	"github.com/labstack/echo/v4"
+	"gitlab.com/tiketfest/backend/config"
+	"gitlab.com/tiketfest/backend/models"
+	"gitlab.com/tiketfest/backend/packages/jwt"
+	"gitlab.com/tiketfest/backend/packages/permission"
+	"gitlab.com/tiketfest/backend/utilities"
 	"net/http"
 	"strings"
 )

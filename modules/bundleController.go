@@ -1,13 +1,15 @@
 package modules
 
 import (
-	auth "Users/evilkidz/Project/Golang/CMS/backend/modules/auth/controller"
-	category "Users/evilkidz/Project/Golang/CMS/backend/modules/category/controller"
-	content "Users/evilkidz/Project/Golang/CMS/backend/modules/content/controller"
-	feature "Users/evilkidz/Project/Golang/CMS/backend/modules/feature/controller"
-	permission "Users/evilkidz/Project/Golang/CMS/backend/modules/permission/controller"
-	role "Users/evilkidz/Project/Golang/CMS/backend/modules/role/controller"
-	user "Users/evilkidz/Project/Golang/CMS/backend/modules/user/controller"
+	auth "gitlab.com/tiketfest/backend/modules/auth/controller"
+	category "gitlab.com/tiketfest/backend/modules/category/controller"
+	content "gitlab.com/tiketfest/backend/modules/content/controller"
+	feature "gitlab.com/tiketfest/backend/modules/feature/controller"
+	permission "gitlab.com/tiketfest/backend/modules/permission/controller"
+	role "gitlab.com/tiketfest/backend/modules/role/controller"
+	transaction "gitlab.com/tiketfest/backend/modules/transaction/controller"
+	transactionItem "gitlab.com/tiketfest/backend/modules/transactionItem/controller"
+	user "gitlab.com/tiketfest/backend/modules/user/controller"
 	"go.uber.org/fx"
 )
 
@@ -20,4 +22,6 @@ var AppController = fx.Options(
 	fx.Provide(auth.NewController),
 	fx.Provide(category.NewController),
 	fx.Provide(content.NewController),
+	fx.Provide(transaction.NewController),
+	fx.Provide(transactionItem.NewController),
 )

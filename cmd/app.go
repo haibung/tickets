@@ -1,14 +1,14 @@
 package cmd
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/config"
-	"Users/evilkidz/Project/Golang/CMS/backend/modules"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/logger"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/postgres"
-	_redis "Users/evilkidz/Project/Golang/CMS/backend/packages/redis"
-	"Users/evilkidz/Project/Golang/CMS/backend/routers"
 	"context"
 	"fmt"
+	"gitlab.com/tiketfest/backend/config"
+	"gitlab.com/tiketfest/backend/modules"
+	"gitlab.com/tiketfest/backend/packages/logger"
+	"gitlab.com/tiketfest/backend/packages/postgres"
+	_redis "gitlab.com/tiketfest/backend/packages/redis"
+	"gitlab.com/tiketfest/backend/routers"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/cobra"

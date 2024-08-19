@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/cmd/seeds"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/logger"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/postgres"
 	"github.com/spf13/cobra"
+	"gitlab.com/tiketfest/backend/cmd/seeds"
+	"gitlab.com/tiketfest/backend/packages/logger"
+	"gitlab.com/tiketfest/backend/packages/postgres"
 )
 
 var seed = &cobra.Command{

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"Users/evilkidz/Project/Golang/CMS/backend/config"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/logger"
+	"gitlab.com/tiketfest/backend/config"
+	"gitlab.com/tiketfest/backend/packages/logger"
 
 	gormLogger "gorm.io/gorm/logger"
 

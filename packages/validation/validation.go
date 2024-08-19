@@ -1,8 +1,8 @@
 package validation
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/utilities"
 	"fmt"
+	"gitlab.com/tiketfest/backend/utilities"
 	"strings"
 )
 
@@ -49,3 +49,5 @@ func (receiver *Validation) IsIntegerMin(value, min int, label string) {
 		})
 	}
 }
+
+// IsFloatMax :

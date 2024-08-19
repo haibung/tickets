@@ -1,8 +1,8 @@
 package seeds
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/models"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/postgres"
+	"gitlab.com/tiketfest/backend/models"
+	"gitlab.com/tiketfest/backend/packages/postgres"
 )
 
 func Role(db *postgres.DB) error {

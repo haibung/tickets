@@ -1,8 +1,8 @@
 package models
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/utilities"
 	"fmt"
+	"gitlab.com/tiketfest/backend/utilities"
 	"time"
 )
 

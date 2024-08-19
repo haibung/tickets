@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"time"
 
-	userRepository "Users/evilkidz/Project/Golang/CMS/backend/modules/user/repository"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/logger"
-	"Users/evilkidz/Project/Golang/CMS/backend/utilities"
+	userRepository "gitlab.com/tiketfest/backend/modules/user/repository"
+	"gitlab.com/tiketfest/backend/packages/logger"
+	"gitlab.com/tiketfest/backend/utilities"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"

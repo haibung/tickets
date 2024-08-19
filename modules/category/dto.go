@@ -1,9 +1,9 @@
 package category
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/validation"
-	"Users/evilkidz/Project/Golang/CMS/backend/utilities"
 	"errors"
+	"gitlab.com/tiketfest/backend/packages/validation"
+	"gitlab.com/tiketfest/backend/utilities"
 	"time"
 )
 

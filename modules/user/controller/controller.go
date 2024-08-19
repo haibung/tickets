@@ -1,16 +1,16 @@
 package controller
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/models"
-	roleDto "Users/evilkidz/Project/Golang/CMS/backend/modules/role"
-	roleController "Users/evilkidz/Project/Golang/CMS/backend/modules/role/controller"
-	"Users/evilkidz/Project/Golang/CMS/backend/modules/user"
-	"Users/evilkidz/Project/Golang/CMS/backend/modules/user/repository"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/logger"
-	"Users/evilkidz/Project/Golang/CMS/backend/utilities"
 	"context"
 	"errors"
 	"fmt"
+	"gitlab.com/tiketfest/backend/models"
+	roleDto "gitlab.com/tiketfest/backend/modules/role"
+	roleController "gitlab.com/tiketfest/backend/modules/role/controller"
+	"gitlab.com/tiketfest/backend/modules/user"
+	"gitlab.com/tiketfest/backend/modules/user/repository"
+	"gitlab.com/tiketfest/backend/packages/logger"
+	"gitlab.com/tiketfest/backend/utilities"
 	"go.uber.org/fx"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"

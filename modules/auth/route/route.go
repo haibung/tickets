@@ -1,13 +1,13 @@
 package route
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/modules/auth"
-	"Users/evilkidz/Project/Golang/CMS/backend/modules/auth/controller"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/logger"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/postgres"
-	"Users/evilkidz/Project/Golang/CMS/backend/routers"
-	"Users/evilkidz/Project/Golang/CMS/backend/utilities"
 	"github.com/labstack/echo/v4"
+	"gitlab.com/tiketfest/backend/modules/auth"
+	"gitlab.com/tiketfest/backend/modules/auth/controller"
+	"gitlab.com/tiketfest/backend/packages/logger"
+	"gitlab.com/tiketfest/backend/packages/postgres"
+	"gitlab.com/tiketfest/backend/routers"
+	"gitlab.com/tiketfest/backend/utilities"
 	"go.uber.org/fx"
 	"net/http"
 )

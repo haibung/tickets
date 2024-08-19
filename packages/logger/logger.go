@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/utilities"
+	"gitlab.com/tiketfest/backend/utilities"
 
 	runtime "github.com/banzaicloud/logrus-runtime-formatter"
 	"github.com/sirupsen/logrus"

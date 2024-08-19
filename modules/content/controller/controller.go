@@ -1,17 +1,17 @@
 package controller
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/models"
-	categoryDto "Users/evilkidz/Project/Golang/CMS/backend/modules/category"
-	categoryController "Users/evilkidz/Project/Golang/CMS/backend/modules/category/controller"
-	"Users/evilkidz/Project/Golang/CMS/backend/modules/content"
-	"Users/evilkidz/Project/Golang/CMS/backend/modules/content/repository"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/logger"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/paginate"
-	"Users/evilkidz/Project/Golang/CMS/backend/utilities"
 	"context"
 	"errors"
 	"fmt"
+	"gitlab.com/tiketfest/backend/models"
+	categoryDto "gitlab.com/tiketfest/backend/modules/category"
+	categoryController "gitlab.com/tiketfest/backend/modules/category/controller"
+	"gitlab.com/tiketfest/backend/modules/content"
+	"gitlab.com/tiketfest/backend/modules/content/repository"
+	"gitlab.com/tiketfest/backend/packages/logger"
+	"gitlab.com/tiketfest/backend/packages/paginate"
+	"gitlab.com/tiketfest/backend/utilities"
 	"go.uber.org/fx"
 	"gorm.io/gorm"
 	"net/http"
@@ -38,6 +38,7 @@ func NewController(contentController ContentController) IContentController {
 }
 
 // Create :
+
 func (receiver *ContentController) Create(ctx context.Context, reqData *content.CreateRequest, tx *gorm.DB) (*int, error) {
 	// Validate request data
 	messages, err := reqData.Validate()

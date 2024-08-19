@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/logger"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/postgres"
 	"github.com/pressly/goose"
 	"github.com/spf13/cobra"
+	"gitlab.com/tiketfest/backend/packages/logger"
+	"gitlab.com/tiketfest/backend/packages/postgres"
 )
 
 var migration = &cobra.Command{

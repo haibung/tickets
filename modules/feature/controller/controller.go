@@ -1,15 +1,15 @@
 package controller
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/models"
-	"Users/evilkidz/Project/Golang/CMS/backend/modules/feature"
-	"Users/evilkidz/Project/Golang/CMS/backend/modules/feature/repository"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/logger"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/paginate"
-	"Users/evilkidz/Project/Golang/CMS/backend/utilities"
 	"context"
 	"errors"
 	"fmt"
+	"gitlab.com/tiketfest/backend/models"
+	"gitlab.com/tiketfest/backend/modules/feature"
+	"gitlab.com/tiketfest/backend/modules/feature/repository"
+	"gitlab.com/tiketfest/backend/packages/logger"
+	"gitlab.com/tiketfest/backend/packages/paginate"
+	"gitlab.com/tiketfest/backend/utilities"
 	"go.uber.org/fx"
 	"gorm.io/gorm"
 	"net/http"

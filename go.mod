@@ -1,4 +1,4 @@
-module Users/evilkidz/Project/Golang/CMS/backend
+module gitlab.com/tiketfest/backend
 
 go 1.20
 

@@ -1,11 +1,11 @@
 package models
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/utilities"
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"gitlab.com/tiketfest/backend/utilities"
 	"gorm.io/gorm"
 	"time"
 )

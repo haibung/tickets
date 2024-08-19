@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"Users/evilkidz/Project/Golang/CMS/backend/config"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/logger"
+	"gitlab.com/tiketfest/backend/config"
+	"gitlab.com/tiketfest/backend/packages/logger"
 
 	"github.com/go-redis/redis/v8"
 )

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/cmd"
+	"gitlab.com/tiketfest/backend/cmd"
 	"os"
 )
 

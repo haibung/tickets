@@ -1,11 +1,11 @@
 package permission
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/models"
-	"Users/evilkidz/Project/Golang/CMS/backend/packages/validation"
-	"Users/evilkidz/Project/Golang/CMS/backend/utilities"
 	"errors"
 	"fmt"
+	"gitlab.com/tiketfest/backend/models"
+	"gitlab.com/tiketfest/backend/packages/validation"
+	"gitlab.com/tiketfest/backend/utilities"
 )
 
 type (

@@ -1,8 +1,8 @@
 package models
 
 import (
-	"Users/evilkidz/Project/Golang/CMS/backend/utilities"
 	"fmt"
+	"gitlab.com/tiketfest/backend/utilities"
 	"time"
 )
 
@@ -19,18 +19,21 @@ type (
 )
 
 const (
-	FeatureUser       FeatureCode = "USER"
-	FeatureContent    FeatureCode = "CONTENT"
-	FeaturePermission FeatureCode = "PERMISSION"
-	FeatureRole       FeatureCode = "ROLE"
-	FeatureFeature    FeatureCode = "FEATURE"
-	FeatureCategory   FeatureCode = "CATEGORY"
-	FeatureMedia      FeatureCode = "MEDIA"
+	FeatureUser            FeatureCode = "USER"
+	FeatureContent         FeatureCode = "CONTENT"
+	FeaturePermission      FeatureCode = "PERMISSION"
+	FeatureRole            FeatureCode = "ROLE"
+	FeatureFeature         FeatureCode = "FEATURE"
+	FeatureCategory        FeatureCode = "CATEGORY"
+	FeatureMedia           FeatureCode = "MEDIA"
+	FeatureTransaction     FeatureCode = "TRANSACTION"
+	FeatureTransactionItem FeatureCode = "TRANSACTION_ITEM"
+	FeaturePayment         FeatureCode = "PAYMENT"
 )
 
 func (receiver FeatureCode) IsValid() error {
 	switch receiver {
-	case FeatureUser, FeatureContent, FeaturePermission, FeatureRole, FeatureMedia, FeatureCategory, FeatureFeature:
+	case FeatureUser, FeatureContent, FeaturePermission, FeatureRole, FeatureMedia, FeatureCategory, FeatureFeature, FeatureTransaction, FeatureTransactionItem, FeaturePayment:
 		return nil
 	}
 
