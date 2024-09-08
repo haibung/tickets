@@ -40,7 +40,7 @@ func (receiver *TransactionItemController) Create(ctx context.Context, reqData *
 	insertID, err := receiver.TransactionItemRepository.Create(ctx, &models.TransactionItems{
 		EventID:       reqData.EventID,
 		Qty:           reqData.Qty,
-		TransactionID: reqData.TransactionID,
+		TransactionID: *reqData.TransactionID,
 	}, tx)
 	if err != nil {
 		receiver.Logger.Error(err)

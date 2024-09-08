@@ -13,6 +13,7 @@ type (
 	ITransactionInterface interface {
 		Create(ctx context.Context, reqData *models.Transactions, tx *gorm.DB) (*int, error)
 		FindByID(ctx context.Context, reqData *models.Transactions) (*models.Transactions, error)
+		Update(ctx context.Context, reqData *models.Transactions, tx *gorm.DB) error
 	}
 
 	TransactionRepository struct {
@@ -48,4 +49,24 @@ func (receiver *TransactionRepository) FindByID(ctx context.Context, reqData *mo
 	}
 
 	return transaction, nil
+}
+
+func (receiver *TransactionRepository) Update(ctx context.Context, reqData *models.Transactions, tx *gorm.DB) error {
+	updates := map[string]interface{}{
+		"total":       reqData.Total,
+		"fee":         reqData.Fee,
+		"tax":         reqData.Tax,
+		"commision":   reqData.Commission,
+		"grand_total": reqData.GrandTotal,
+	}
+
+	if err := tx.WithContext(ctx).
+		Model(&models.Transactions{}).
+		Where("id = ?", reqData.ID).
+		Updates(&updates).Error; err != nil {
+		receiver.Logger.Error(err)
+		return err
+	}
+
+	return nil
 }

@@ -11,7 +11,7 @@ type (
 	CreateRequest struct {
 		ContextUserID int
 
-		TransactionID int
+		TransactionID *int
 		EventID       int
 		Qty           int
 
@@ -28,7 +28,7 @@ type (
 )
 
 func (receiver CreateRequest) Validate() ([]map[string]interface{}, error) {
-	receiver.Validation.IsIntegerMin(receiver.TransactionID, 1, "TransactionID")
+	receiver.Validation.IsIntegerMin(*receiver.TransactionID, 1, "TransactionID")
 	receiver.Validation.IsIntegerMin(receiver.EventID, 1, "EventID")
 	receiver.Validation.IsIntegerMin(receiver.Qty, 1, "Qty")
 
