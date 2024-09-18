@@ -53,7 +53,7 @@ func (receiver *Handler) Create(c echo.Context) error {
 		})
 	}
 
-	reqData.ContextUserID = data.UserID
+	reqData.ContextUserID = &data.UserID
 
 	if err := c.Bind(reqData); err != nil {
 		receiver.Logger.Error(err)
