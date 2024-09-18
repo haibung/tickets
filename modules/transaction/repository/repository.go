@@ -51,22 +51,49 @@ func (receiver *TransactionRepository) FindByID(ctx context.Context, reqData *mo
 	return transaction, nil
 }
 
+//func (receiver *TransactionRepository) Update(ctx context.Context, reqData *models.Transactions, tx *gorm.DB) error {
+//	updates := map[string]interface{}{
+//		"total":       reqData.Total,
+//		"fee":         reqData.Fee,
+//		"tax":         reqData.Tax,
+//		"commission":  reqData.Commission,
+//		"grand_total": reqData.GrandTotal,
+//	}
+//
+//	if err := tx.WithContext(ctx).
+//		Model(&models.Transactions{}).
+//		Where("id = ?", reqData.ID).
+//		Updates(&updates).Error; err != nil {
+//		receiver.Logger.Error(err)
+//		return err
+//	}
+//
+//	return nil
+//}
+
 func (receiver *TransactionRepository) Update(ctx context.Context, reqData *models.Transactions, tx *gorm.DB) error {
+	// Prepare the fields to be updated
 	updates := map[string]interface{}{
 		"total":       reqData.Total,
 		"fee":         reqData.Fee,
 		"tax":         reqData.Tax,
-		"commision":   reqData.Commission,
+		"commission":  reqData.Commission, // Fixed typo here
 		"grand_total": reqData.GrandTotal,
 	}
 
+	// Log the update values for debugging
+	receiver.Logger.Info("Updating transaction with ID:", reqData.ID)
+	receiver.Logger.Info("Update values:", updates)
+
+	// Perform the update query
 	if err := tx.WithContext(ctx).
 		Model(&models.Transactions{}).
 		Where("id = ?", reqData.ID).
-		Updates(&updates).Error; err != nil {
-		receiver.Logger.Error(err)
+		Updates(updates).Error; err != nil {
+		receiver.Logger.Error("Failed to update transaction:", err)
 		return err
 	}
 
+	receiver.Logger.Info("Transaction updated successfully with ID:", reqData.ID)
 	return nil
 }
