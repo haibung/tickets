@@ -81,7 +81,7 @@ func (receiver *TransactionController) Create(ctx context.Context, reqData *tran
 
 	if reqData.ContextUserID != nil {
 		_, err := receiver.FindByID(ctx, &transaction.FindByIDRequest{
-			ID: reqData.ContextUserID,
+			ID: *reqData.ContextUserID,
 		})
 		if err != nil {
 			receiver.Logger.Error(err)

@@ -10,7 +10,7 @@ import (
 type (
 	// Struct Request
 	CreateRequest struct {
-		ContextUserID int
+		ContextUserID *int
 
 		InvoiceNumber string
 		FullName      string
