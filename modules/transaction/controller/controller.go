@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gitlab.com/tiketfest/backend/enum"
 	"gitlab.com/tiketfest/backend/models"
 	"gitlab.com/tiketfest/backend/modules/transaction"
 	"gitlab.com/tiketfest/backend/modules/transaction/repository"
@@ -20,6 +21,7 @@ import (
 type (
 	ITransactionController interface {
 		Create(ctx context.Context, reqData *transaction.CreateRequest, tx *gorm.DB) (*int, error)
+		FindAll(ctx context.Context, reqData *transaction.FindAllRequest) ([]*transaction.FindByIDResponse, error)
 	}
 
 	TransactionController struct {
@@ -49,18 +51,33 @@ func (receiver *TransactionController) Create(ctx context.Context, reqData *tran
 		return nil, utilities.ErrorRequest(err, http.StatusBadRequest, messages)
 	}
 
+	if reqData.ContextUserID != nil {
+		existingTransaction, err := receiver.TransactionRepository.FindByID(ctx, &models.Transactions{
+			UserID: *reqData.ContextUserID,
+		})
+		if err == nil && existingTransaction != nil {
+			receiver.Logger.Info("Transaction found for user, returning existing transaction ID")
+			return &existingTransaction.ID, nil
+		}
+		if err != nil && err != gorm.ErrRecordNotFound {
+			receiver.Logger.Error(err)
+			return nil, utilities.ErrorRequest(errors.New(utilities.InternalServiceError), http.StatusInternalServerError)
+		}
+	}
+
 	// Create transaction
 	insertID, err := receiver.TransactionRepository.Create(ctx, &models.Transactions{
+		UserID:        *reqData.ContextUserID,
 		InvoiceNumber: reqData.InvoiceNumber,
 		FullName:      reqData.FullName,
 		Email:         reqData.Email,
 		PhoneNumber:   phoneNumber,
+		Status:        enum.TransactionStatusWaiting,
 		//Total:         reqData.Total,
 		//Fee:           reqData.Fee,
 		//Tax:           reqData.Tax,
 		//Commission:    reqData.Commission,
 		//GrandTotal:    reqData.GrandTotal,
-		//Status:        reqData.Status,
 
 	}, tx)
 
@@ -79,32 +96,13 @@ func (receiver *TransactionController) Create(ctx context.Context, reqData *tran
 		}
 	}
 
-	if reqData.ContextUserID != nil {
-		_, err := receiver.FindByID(ctx, &transaction.FindByIDRequest{
-			ID: *reqData.ContextUserID,
-		})
-		if err != nil {
-			receiver.Logger.Error(err)
-			if err == gorm.ErrRecordNotFound {
-				return nil, utilities.ErrorRequest(
-					fmt.Errorf(utilities.DataNotFound, "transaction"),
-					http.StatusNotFound,
-				)
-			}
-			return nil, utilities.ErrorRequest(
-				errors.New(utilities.InternalServiceError),
-				http.StatusInternalServerError,
-			)
-		}
-	}
-
 	err = receiver.TransactionRepository.Update(ctx, &models.Transactions{
 		ID:         *insertID,
-		Fee:        10.0,
-		Commission: 5.0,
-		Total:      100.0,
-		Tax:        15.0,
-		GrandTotal: 130.0,
+		Fee:        11.0,
+		Commission: 6.0,
+		Total:      1100.0,
+		Tax:        155.0,
+		GrandTotal: 1302.0,
 	}, tx)
 
 	return insertID, nil
@@ -160,4 +158,57 @@ func (receiver *TransactionController) FindByID(ctx context.Context, reqData *tr
 		Items:         items,
 		CreatedAt:     fetchTransaction.CreatedAt,
 	}, nil
+}
+
+func (receiver *TransactionController) FindAll(ctx context.Context, reqData *transaction.FindAllRequest) ([]*transaction.FindByIDResponse, error) {
+
+	// Validate the request data
+	messages, err := reqData.Validate()
+	if err != nil {
+		receiver.Logger.Error("Validation error", err)
+		return nil, utilities.ErrorRequest(err, http.StatusBadRequest, messages)
+	}
+
+	transactionRequest := &models.Transactions{
+		UserID: reqData.ContextUserID,
+	}
+
+	transactions, err := receiver.TransactionRepository.FindAll(ctx, transactionRequest)
+	if err != nil {
+		receiver.Logger.Error("Error fetching transactions", err)
+		return nil, utilities.ErrorRequest(
+			errors.New(utilities.InternalServiceError),
+			http.StatusInternalServerError,
+		)
+	}
+
+	var response []*transaction.FindByIDResponse
+	for _, t := range transactions {
+		var items []transaction.ItemTransaction
+		fmt.Print("ini item", items)
+		for _, item := range t.TransactionItems {
+			items = append(items, transaction.ItemTransaction{
+				EventID: item.EventID,
+				Qty:     item.Qty,
+			})
+		}
+
+		response = append(response, &transaction.FindByIDResponse{
+			ID:            t.ID,
+			InvoiceNumber: t.InvoiceNumber,
+			FullName:      t.FullName,
+			Email:         t.Email,
+			PhoneNumber:   *t.PhoneNumber,
+			//Total:         t.Total,
+			//Fee:           t.Fee,
+			//Tax:           t.Tax,
+			//Commission:    t.Commission,
+			//GrandTotal:    t.GrandTotal,
+			Status:    t.Status.String(),
+			Items:     items,
+			CreatedAt: t.CreatedAt,
+		})
+	}
+
+	return response, nil
 }

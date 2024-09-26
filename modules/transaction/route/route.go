@@ -1,6 +1,7 @@
 package route
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"gitlab.com/tiketfest/backend/models"
 	"gitlab.com/tiketfest/backend/modules/transaction"
@@ -32,6 +33,7 @@ func (receiver *Handler) Route(m ...echo.MiddlewareFunc) {
 	echoRoute := receiver.Router.Group("/v1/transaction", m...)
 	echoRoute.Use(receiver.Router.Authentication)
 	echoRoute.POST("", receiver.Create)
+	echoRoute.GET("/all", receiver.FindAll)
 }
 
 // Create :
@@ -81,6 +83,53 @@ func (receiver *Handler) Create(c echo.Context) error {
 
 	return utilities.Response(c, &utilities.ResponseRequest{
 		StatusCode: http.StatusCreated,
+		Message:    utilities.Success,
+		Data:       resp,
+	})
+}
+
+func (receiver *Handler) FindAll(c echo.Context) error {
+	var reqData = new(transaction.FindAllRequest)
+	data, ok := c.Request().Context().Value(jwt.InternalClaimData{}).(jwt.InternalClaimData)
+	if !ok {
+		return utilities.Response(c, &utilities.ResponseRequest{
+			StatusCode: http.StatusUnauthorized,
+			Message:    utilities.Authorization,
+		})
+	}
+	fmt.Println("ini data", data)
+
+	if err := _permission.Read(data.Permissions, models.FeatureTransaction); err != nil {
+		receiver.Logger.Error("No permission for Transaction", err)
+		return utilities.Response(c, &utilities.ResponseRequest{
+			StatusCode: http.StatusForbidden,
+			Message:    utilities.Forbidden,
+		})
+	}
+	// Check permission to read the Transaction Item feature
+	//if err := _permission.Read(data.Permissions, models.FeatureTransactionItem); err != nil {
+	//	receiver.Logger.Error("No permission for Transaction Item", err)
+	//	return utilities.Response(c, &utilities.ResponseRequest{
+	//		StatusCode: http.StatusForbidden,
+	//		Message:    utilities.Forbidden,
+	//	})
+	//}
+
+	reqData.ContextUserID = data.UserID
+	fmt.Println("ini data userid", data.UserID)
+
+	resp, err := receiver.Controller.FindAll(c.Request().Context(), reqData)
+	if err != nil {
+		receiver.Logger.Error(err)
+		return utilities.Response(c, &utilities.ResponseRequest{
+			StatusCode: utilities.ParseError(err).StatusCode,
+			Data:       utilities.ParseError(err).Data,
+			Message:    err.Error(),
+		})
+	}
+
+	return utilities.Response(c, &utilities.ResponseRequest{
+		StatusCode: http.StatusOK,
 		Message:    utilities.Success,
 		Data:       resp,
 	})

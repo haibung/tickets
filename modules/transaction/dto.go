@@ -40,14 +40,37 @@ type (
 		Validation validation.Validation
 	}
 
+	FindByID struct {
+		ContextUserID *int
+
+		ID int
+
+		Validation validation.Validation
+	}
+
+	FindAllRequest struct {
+		ContextUserID int
+
+		ID int
+
+		Validation validation.Validation
+	}
+
 	FindByIDResponse struct {
 		ID            int
 		InvoiceNumber string
 		FullName      string
 		Email         string
 		PhoneNumber   string
-		Items         []ItemTransaction
-		CreatedAt     time.Time `json:"created_at"`
+		//Total         float64
+		//Fee           float64
+		//Tax           float64
+		//Commission    float64
+		//GrandTotal    float64
+		Status    string
+		Items     []ItemTransaction
+		Payment   []Payment
+		CreatedAt time.Time `json:"created_at"`
 	}
 )
 
@@ -71,7 +94,28 @@ func (receiver CreateRequest) Validate() ([]map[string]interface{}, error) {
 }
 
 func (receiver FindByIDRequest) Validate() ([]map[string]interface{}, error) {
-	receiver.Validation.IsIntegerMin(receiver.ID, 1, "Role")
+	receiver.Validation.IsIntegerMin(receiver.ID, 1, "Transaction ID must be greater than 0") // Validate the transaction ID
+
+	if len(receiver.Validation.Messages) > 0 {
+		return receiver.Validation.Messages, errors.New(utilities.BadRequest)
+	}
+	return nil, nil
+}
+
+//func (receiver FindAllRequest) Validate() ([]map[string]interface{}, error) {
+//	receiver.Validation.IsIntegerMin(receiver.ContextUserID, 1, "UserID must be greater than 0")
+//
+//	if len(receiver.Validation.Messages) > 0 {
+//		return receiver.Validation.Messages, errors.New(utilities.BadRequest)
+//	}
+//	return nil, nil
+//}
+
+func (receiver FindAllRequest) Validate() ([]map[string]interface{}, error) {
+	receiver.Validation.IsIntegerMin(receiver.ContextUserID, 1, "Role")
+	if receiver.ContextUserID == 0 {
+		receiver.Validation.IsIntegerMin(receiver.ID, 1, "ID")
+	}
 
 	if len(receiver.Validation.Messages) > 0 {
 		return receiver.Validation.Messages, errors.New(utilities.BadRequest)
