@@ -4,6 +4,7 @@ import (
 	auth "gitlab.com/tiketfest/backend/modules/auth/route"
 	category "gitlab.com/tiketfest/backend/modules/category/route"
 	content "gitlab.com/tiketfest/backend/modules/content/route"
+	payment "gitlab.com/tiketfest/backend/modules/payment/route"
 	permission "gitlab.com/tiketfest/backend/modules/permission/route"
 	role "gitlab.com/tiketfest/backend/modules/role/route"
 	transaction "gitlab.com/tiketfest/backend/modules/transaction/route"
@@ -22,4 +23,5 @@ var AppRoute = fx.Options(
 	fx.Invoke(content.NewRoute),
 	fx.Invoke(transaction.NewRoute),
 	fx.Invoke(transactionItem.NewRoute),
+	fx.Invoke(payment.NewRoute),
 )

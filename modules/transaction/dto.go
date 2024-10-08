@@ -67,9 +67,9 @@ type (
 		//Tax           float64
 		//Commission    float64
 		//GrandTotal    float64
-		Status    string
-		Items     []ItemTransaction
-		Payment   []Payment
+		Status string
+		Items  []ItemTransaction
+		//Payment   []Payment
 		CreatedAt time.Time `json:"created_at"`
 	}
 )

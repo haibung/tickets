@@ -43,6 +43,14 @@ func RandomString(length int) string {
 	return fmt.Sprintf("%x", b)[:length]
 }
 
+func RandomInt(min, max int) int {
+	if min >= max {
+		return min
+	}
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(max-min+1) + min
+}
+
 // PhoneNumberTrim
 func PhoneNumberTrim(phoneNumber string) (*string, error) {
 	phoneNumber = strings.ReplaceAll(phoneNumber, "+62", "")

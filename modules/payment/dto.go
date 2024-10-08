@@ -12,7 +12,7 @@ type (
 		ContextUserID int
 
 		TransactionID    *int
-		InternalID       string
+		InternalID       int
 		Status           *string
 		SnapshotRequest  *string
 		SnapshotCallback *string
@@ -31,7 +31,7 @@ type (
 
 func (receiver CreateRequest) Validate() ([]map[string]interface{}, error) {
 	receiver.Validation.IsIntegerMin(*receiver.TransactionID, 1, "TransactionID")
-	receiver.Validation.IsEmptyString(receiver.InternalID, "InternalID")
+	receiver.Validation.IsIntegerMin(receiver.InternalID, 1, "InternalID")
 	receiver.Validation.IsEmptyString(*receiver.Status, "Status")
 	receiver.Validation.IsEmptyString(*receiver.SnapshotRequest, "SnapshotRequest")
 	receiver.Validation.IsEmptyString(*receiver.SnapshotCallback, "SnapshotCallback")

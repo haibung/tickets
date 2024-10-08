@@ -49,4 +49,5 @@ func (receiver *PaymentController) Create(ctx context.Context, reqData *payment.
 	}
 
 	return insertID, nil
+
 }

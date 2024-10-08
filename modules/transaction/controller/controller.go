@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"gitlab.com/tiketfest/backend/enum"
 	"gitlab.com/tiketfest/backend/models"
+	"gitlab.com/tiketfest/backend/modules/payment"
+	paymentController "gitlab.com/tiketfest/backend/modules/payment/controller"
 	"gitlab.com/tiketfest/backend/modules/transaction"
 	"gitlab.com/tiketfest/backend/modules/transaction/repository"
 	transactionItemDto "gitlab.com/tiketfest/backend/modules/transactionItem"
@@ -28,6 +30,7 @@ type (
 		fx.In
 		TransactionRepository repository.TransactionRepository
 		TransactionItem       transactionItem.TransactionItemController
+		PaymentController     paymentController.PaymentController
 		Logger                *logger.Logger
 	}
 )
@@ -56,7 +59,7 @@ func (receiver *TransactionController) Create(ctx context.Context, reqData *tran
 			UserID: *reqData.ContextUserID,
 		})
 		if err == nil && existingTransaction != nil {
-			receiver.Logger.Info("Transaction found for user, returning existing transaction ID")
+			receiver.Logger.Info("Transaction already exists for user, but proceeding to create a new transaction.")
 			return &existingTransaction.ID, nil
 		}
 		if err != nil && err != gorm.ErrRecordNotFound {
@@ -105,10 +108,33 @@ func (receiver *TransactionController) Create(ctx context.Context, reqData *tran
 		GrandTotal: 1302.0,
 	}, tx)
 
+	if err != nil {
+		receiver.Logger.Error(err)
+		return nil, utilities.ErrorRequest(err, http.StatusInternalServerError, nil)
+	}
+
+	snapshotRequest := fmt.Sprintf(`{"transaction_id": %d, "details": "Transaction snapshot for %d"}`, *insertID, *insertID)
+	snapshotCallback := `{"url": "https://example.com/callback", "method": "POST"}`
+
+	paymentReq := &payment.CreateRequest{
+		TransactionID:    insertID,
+		InternalID:       utilities.RandomInt(100000, 999999),
+		Status:           utilities.StringPointer("Pending"),
+		SnapshotRequest:  utilities.StringPointer(snapshotRequest),
+		SnapshotCallback: utilities.StringPointer(snapshotCallback),
+	}
+
+	paymentID, err := receiver.PaymentController.Create(ctx, paymentReq, tx)
+	if err != nil {
+		receiver.Logger.Error("Error creating payment for transaction:", err)
+		return nil, utilities.ErrorRequest(err, http.StatusInternalServerError, nil)
+	}
+
+	receiver.Logger.Info("Payment created successfully with ID:", *paymentID, "for transaction ID:", *insertID)
+
 	return insertID, nil
 }
 
-// FindByID :
 func (receiver *TransactionController) FindByID(ctx context.Context, reqData *transaction.FindByIDRequest) (*transaction.FindByIDResponse, error) {
 	// Validate request data
 	messages, err := reqData.Validate()

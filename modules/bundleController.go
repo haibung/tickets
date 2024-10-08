@@ -5,6 +5,7 @@ import (
 	category "gitlab.com/tiketfest/backend/modules/category/controller"
 	content "gitlab.com/tiketfest/backend/modules/content/controller"
 	feature "gitlab.com/tiketfest/backend/modules/feature/controller"
+	payment "gitlab.com/tiketfest/backend/modules/payment/controller"
 	permission "gitlab.com/tiketfest/backend/modules/permission/controller"
 	role "gitlab.com/tiketfest/backend/modules/role/controller"
 	transaction "gitlab.com/tiketfest/backend/modules/transaction/controller"
@@ -24,4 +25,5 @@ var AppController = fx.Options(
 	fx.Provide(content.NewController),
 	fx.Provide(transaction.NewController),
 	fx.Provide(transactionItem.NewController),
+	fx.Provide(payment.NewController),
 )

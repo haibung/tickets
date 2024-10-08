@@ -6,10 +6,10 @@ type (
 	Payments struct {
 		ID               int
 		TransactionID    int
-		InternalID       string
+		InternalID       int
 		Status           *string
-		SnapshotRequest  *string
-		SnapshotCallback *string
+		SnapshotRequest  *string `json:"-"`
+		SnapshotCallback *string `json:"-"`
 		CreatedAt        time.Time
 
 		// Relations
