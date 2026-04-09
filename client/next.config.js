@@ -1,15 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Allow images from external domains as needed
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
-    ],
-  },
+  // Add specific trusted image hostnames as needed, e.g.:
+  // images: {
+  //   remotePatterns: [
+  //     { protocol: "https", hostname: "your-cdn.example.com" },
+  //   ],
+  // },
 };
 
 module.exports = nextConfig;
