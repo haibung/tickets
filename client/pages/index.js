@@ -236,54 +236,155 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How it works */}
+      {/* Why TiketKu — differentiator section */}
       <section className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl font-bold text-neutral-800 mb-2">
-            How It Works
-          </h2>
-          <p className="text-neutral-500 mb-12">
-            Book your tickets in three simple steps
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="inline-block text-xs font-bold uppercase tracking-widest text-primary bg-primary bg-opacity-10 px-4 py-1.5 rounded-full mb-4">
+              The TiketKu Difference
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-neutral-800 mb-3">
+              Built for fans who deserve better
+            </h2>
+            <p className="text-neutral-500 max-w-xl mx-auto">
+              We rebuilt ticketing from scratch — no hidden fees, no scalpers,
+              no last-minute surprises. Just real tickets, delivered instantly.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { step: "01", title: "Find an Event", desc: "Browse thousands of concerts, sports, and festivals near you.", icon: "🔍" },
-              { step: "02", title: "Choose Your Tickets", desc: "Select the ticket type and quantity that suits you.", icon: "🎟️" },
-              { step: "03", title: "Secure Payment", desc: "Pay safely and receive your e-ticket instantly via email.", icon: "✅" },
+              {
+                icon: "🛡️",
+                title: "100% Verified Tickets",
+                desc: "Every ticket is cryptographically signed and linked to your ID. Fakes are impossible.",
+                accent: "from-blue-500 to-blue-700",
+              },
+              {
+                icon: "⚡",
+                title: "Instant Delivery",
+                desc: "Your e-ticket lands in your inbox in under 10 seconds after payment — no collection queues.",
+                accent: "from-yellow-400 to-orange-500",
+              },
+              {
+                icon: "💸",
+                title: "Zero Hidden Fees",
+                desc: "The price you see is the price you pay. Service fee shown upfront, always. No checkout surprises.",
+                accent: "from-green-500 to-emerald-600",
+              },
+              {
+                icon: "🔄",
+                title: "Hassle-Free Refunds",
+                desc: "Event cancelled? Get a full refund processed in 24 hours — automatically, no forms needed.",
+                accent: "from-purple-500 to-purple-700",
+              },
             ].map((item) => (
-              <div key={item.step} className="flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-primary bg-opacity-10 flex items-center justify-center text-2xl mb-4">
-                  {item.icon}
-                </div>
-                <span className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
-                  Step {item.step}
-                </span>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-neutral-500 text-sm max-w-xs">{item.desc}</p>
+              <div
+                key={item.title}
+                className="group relative overflow-hidden rounded-2xl border border-neutral-100 bg-white p-6 hover:shadow-lg transition-shadow"
+              >
+                <div className={`absolute top-0 left-0 h-1 w-full bg-gradient-to-r ${item.accent}`} />
+                <div className="text-3xl mb-4">{item.icon}</div>
+                <h3 className="text-base font-bold text-neutral-800 mb-2">{item.title}</h3>
+                <p className="text-sm text-neutral-500 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA banner */}
-      <section className="bg-neutral-900 py-16">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-            Are you an event organizer?
-          </h2>
-          <p className="text-neutral-400 mb-8">
-            List your event on TiketKu and reach thousands of potential
-            attendees across Indonesia.
-          </p>
-          <Link
-            href="/organizer/create"
-            className="inline-block bg-primary text-white font-semibold px-8 py-3 rounded-full hover:bg-primary-dark transition-colors"
-          >
-            Create an Event →
-          </Link>
+      {/* Social proof + organizer split */}
+      <section className="bg-neutral-50 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            {/* Fan testimonials */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm">
+              <span className="text-xs font-bold uppercase tracking-widest text-primary block mb-3">What Fans Say</span>
+              <h3 className="text-xl font-extrabold text-neutral-800 mb-6">Real stories, real people</h3>
+              <div className="space-y-5">
+                {[
+                  {
+                    name: "Anisa R.",
+                    city: "Jakarta",
+                    rating: 5,
+                    quote: "Got my Coldplay tickets in literally 8 seconds. No queue, no stress. TiketKu is on another level.",
+                    avatar: "AR",
+                  },
+                  {
+                    name: "Dimas P.",
+                    city: "Surabaya",
+                    rating: 5,
+                    quote: "Bought 4 tickets for different people — the attendee form made sure every name matched their ID. Super smooth.",
+                    avatar: "DP",
+                  },
+                  {
+                    name: "Siti N.",
+                    city: "Bandung",
+                    rating: 5,
+                    quote: "Event was postponed. Refund hit my account the next day without me doing anything. Incredible.",
+                    avatar: "SN",
+                  },
+                ].map((t) => (
+                  <div key={t.name} className="flex gap-4">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex-shrink-0 flex items-center justify-center text-white text-xs font-bold">
+                      {t.avatar}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-sm font-semibold text-neutral-800">{t.name}</span>
+                        <span className="text-xs text-neutral-400">{t.city}</span>
+                        <span className="text-xs text-yellow-400">{"★".repeat(t.rating)}</span>
+                      </div>
+                      <p className="text-sm text-neutral-600 leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Organizer power tools */}
+            <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-2xl p-8 shadow-sm text-white flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-widest text-primary block mb-3">For Organizers</span>
+                <h3 className="text-xl font-extrabold mb-3">
+                  Sell out your event — <br />not your soul
+                </h3>
+                <p className="text-neutral-400 text-sm mb-6">
+                  Everything a modern event organizer needs: real-time sales dashboard,
+                  per-ticket attendee validation, configurable purchase limits, and same-day payouts.
+                </p>
+                <ul className="space-y-3 mb-8">
+                  {[
+                    "Real-time sales & revenue dashboard",
+                    "Configurable ticket limits per buyer",
+                    "Automated attendee ID verification",
+                    "Same-day payout to your bank",
+                    "Branded ticket QR codes",
+                  ].map((feat) => (
+                    <li key={feat} className="flex items-center gap-2 text-sm text-neutral-300">
+                      <span className="text-primary font-bold">✓</span>
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link
+                  href="/organizer/create"
+                  className="flex-1 text-center bg-primary text-white font-semibold px-6 py-3 rounded-full hover:bg-orange-700 transition-colors text-sm"
+                >
+                  Create an Event →
+                </Link>
+                <Link
+                  href="/about"
+                  className="flex-1 text-center border border-neutral-600 text-neutral-300 font-semibold px-6 py-3 rounded-full hover:border-white hover:text-white transition-colors text-sm"
+                >
+                  Learn More
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </>
