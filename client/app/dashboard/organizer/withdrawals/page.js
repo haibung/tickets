@@ -17,7 +17,7 @@ export default function OrganizerWithdrawalsPage() {
     e.preventDefault();
     setItems([
       ...items,
-      { id: `WD00${items.length + 1}`, ...form, status: "Pending", date: new Date().toISOString().slice(0, 10) },
+      { id: `WD-${Date.now()}`, ...form, status: "Pending", date: new Date().toISOString().slice(0, 10) },
     ]);
     setForm({ amount: "", bank: "" });
     setShowForm(false);
