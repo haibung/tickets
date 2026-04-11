@@ -3,6 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { login } from "@/lib/api";
+import { saveAuth, dashboardPath } from "@/lib/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,8 +20,18 @@ export default function LoginPage() {
     setError(null);
     try {
       const data = await login(form);
-      if (data?.token) localStorage.setItem("token", data.token);
-      router.push("/");
+      // Backend expected to return { token, role, name, email, id }
+      saveAuth({
+        token: data?.token,
+        user: {
+          id: data?.id,
+          name: data?.name,
+          email: data?.email ?? form.email,
+          role: data?.role ?? "user",
+        },
+      });
+      const redirect = router.query.redirect ?? dashboardPath(data?.role ?? "user");
+      router.push(redirect);
     } catch (err) {
       setError(err.message || "Invalid email or password.");
     } finally {

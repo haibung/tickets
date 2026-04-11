@@ -83,4 +83,64 @@ export const login = (credentials) =>
 export const register = (data) =>
   apiClient.post("/auth/register", data).then((res) => res.data);
 
+// ── Admin ─────────────────────────────────────────────────────────────────────
+
+export const fetchAdminStats = () =>
+  apiClient.get("/admin/stats").then((res) => res.data);
+
+export const fetchAllTransactions = (params = {}) =>
+  apiClient.get("/admin/transactions", { params }).then((res) => res.data);
+
+export const fetchAllUsers = (params = {}) =>
+  apiClient.get("/admin/users", { params }).then((res) => res.data);
+
+export const fetchAllEventTypes = (params = {}) =>
+  apiClient.get("/admin/event-types", { params }).then((res) => res.data);
+
+export const fetchAllTickets = (params = {}) =>
+  apiClient.get("/admin/tickets", { params }).then((res) => res.data);
+
+// ── Organizer ─────────────────────────────────────────────────────────────────
+
+export const fetchOrganizerStats = () =>
+  apiClient.get("/organizer/stats").then((res) => res.data);
+
+export const fetchOrganizerEvents = (params = {}) =>
+  apiClient.get("/organizer/events", { params }).then((res) => res.data);
+
+export const createEventType = (payload) =>
+  apiClient.post("/organizer/events", payload).then((res) => res.data);
+
+export const updateEventType = (id, payload) =>
+  apiClient.put(`/organizer/events/${id}`, payload).then((res) => res.data);
+
+export const deleteEventType = (id) =>
+  apiClient.delete(`/organizer/events/${id}`).then((res) => res.data);
+
+export const fetchOrganizerTickets = (params = {}) =>
+  apiClient.get("/organizer/tickets", { params }).then((res) => res.data);
+
+export const createTicket = (payload) =>
+  apiClient.post("/organizer/tickets", payload).then((res) => res.data);
+
+export const updateTicket = (id, payload) =>
+  apiClient.put(`/organizer/tickets/${id}`, payload).then((res) => res.data);
+
+export const deleteTicket = (id) =>
+  apiClient.delete(`/organizer/tickets/${id}`).then((res) => res.data);
+
+export const fetchOrganizerSales = (params = {}) =>
+  apiClient.get("/organizer/sales", { params }).then((res) => res.data);
+
+export const fetchWithdrawals = (params = {}) =>
+  apiClient.get("/organizer/withdrawals", { params }).then((res) => res.data);
+
+export const createWithdrawal = (payload) =>
+  apiClient.post("/organizer/withdrawals", payload).then((res) => res.data);
+
+// ── User ──────────────────────────────────────────────────────────────────────
+
+export const fetchMyOrders = (params = {}) =>
+  apiClient.get("/user/orders", { params }).then((res) => res.data);
+
 export default apiClient;
