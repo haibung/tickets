@@ -116,6 +116,32 @@ export default function LoginPage() {
                 Register
               </Link>
             </p>
+
+            <div className="mt-6 border-t border-neutral-100 pt-5">
+              <p className="text-xs text-center text-neutral-400 mb-3">— Demo login (no backend needed) —</p>
+              <div className="flex gap-2">
+                {[
+                  { role: "admin",     label: "Admin",     color: "bg-red-50 text-red-600 hover:bg-red-100 border-red-200" },
+                  { role: "organizer", label: "Organizer", color: "bg-blue-50 text-blue-600 hover:bg-blue-100 border-blue-200" },
+                  { role: "user",      label: "User",      color: "bg-green-50 text-green-600 hover:bg-green-100 border-green-200" },
+                ].map(({ role, label, color }) => (
+                  <button
+                    key={role}
+                    type="button"
+                    onClick={() => {
+                      saveAuth({
+                        token: `demo-${role}-token`,
+                        user: { id: role === "admin" ? 1 : role === "organizer" ? 2 : 3, name: `Demo ${label}`, email: `${role}@demo.com`, role },
+                      });
+                      router.push(dashboardPath(role));
+                    }}
+                    className={`flex-1 py-2 text-xs font-semibold rounded-lg border transition-colors ${color}`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
