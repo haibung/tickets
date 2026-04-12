@@ -53,25 +53,22 @@ export default function Navbar() {
             </div>
           </form>
 
-          {/* Desktop nav links */}
-          <div className="hidden md:flex items-center gap-5">
+          {/* Desktop nav links + auth (all on the right) */}
+          <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors ${
+                className={`text-sm font-medium transition-colors px-3 py-1.5 rounded-lg ${
                   router.asPath === link.href
                     ? "text-primary"
-                    : "text-neutral-600 hover:text-neutral-900"
+                    : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50"
                 }`}
               >
                 {link.label}
               </Link>
             ))}
-          </div>
-
-          {/* Auth */}
-          <div className="hidden md:flex items-center gap-2">
+            <span className="w-px h-4 bg-neutral-200 mx-1" />
             <Link
               href="/auth/login"
               className="text-sm font-medium text-neutral-700 hover:text-neutral-900 px-3 py-1.5 transition-colors"
