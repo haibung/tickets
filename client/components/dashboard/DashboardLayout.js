@@ -19,7 +19,9 @@ const NAV = {
     { href: "/dashboard/organizer/withdrawals", label: "Withdrawals", icon: "💰" },
   ],
   user: [
-    { href: "/dashboard/user", label: "My Tickets", icon: "🎟️" },
+    { href: "/dashboard/user?tab=overview", label: "Overview",   icon: "🏠" },
+    { href: "/dashboard/user?tab=tickets",  label: "Tiket Saya", icon: "🎟️" },
+    { href: "/dashboard/user?tab=settings", label: "Pengaturan", icon: "⚙️" },
   ],
 };
 
@@ -29,7 +31,7 @@ const ROLE_BADGE = {
   user: { label: "User", cls: "bg-green-100 text-green-700" },
 };
 
-export default function DashboardLayout({ children, title }) {
+export default function DashboardLayout({ children, title, variant = "light" }) {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -47,15 +49,28 @@ export default function DashboardLayout({ children, title }) {
     router.push("/auth/login");
   };
 
-  const isActive = (href) =>
-    href === "/dashboard/admin" ||
-    href === "/dashboard/organizer" ||
-    href === "/dashboard/user"
+  const isActive = (href) => {
+    if (href.includes("?")) {
+      const [path, qs] = href.split("?");
+      if (router.pathname !== path) return false;
+      const expected = new URLSearchParams(qs);
+      for (const [k, v] of expected.entries()) {
+        const actual = router.query[k] ?? (k === "tab" ? "overview" : undefined);
+        if (actual !== v) return false;
+      }
+      return true;
+    }
+    return href === "/dashboard/admin" ||
+      href === "/dashboard/organizer" ||
+      href === "/dashboard/user"
       ? router.pathname === href
       : router.pathname.startsWith(href);
+  };
+
+  const isDark = variant === "dark";
 
   return (
-    <div className="flex h-screen bg-neutral-50 overflow-hidden">
+    <div className={`flex h-screen overflow-hidden ${isDark ? "bg-[#0d0d0d]" : "bg-neutral-50"}`}>
       {/* ── Mobile overlay ─────────────────────────────────────────────────── */}
       {sidebarOpen && (
         <div
@@ -136,18 +151,18 @@ export default function DashboardLayout({ children, title }) {
       {/* ── Main content area ───────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar */}
-        <header className="flex items-center justify-between px-6 h-16 bg-white border-b border-neutral-200 flex-shrink-0">
+        <header className={`flex items-center justify-between px-6 h-16 border-b flex-shrink-0 ${isDark ? "bg-neutral-900 border-neutral-800" : "bg-white border-neutral-200"}`}>
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-md text-neutral-600 hover:bg-neutral-100"
+              className={`lg:hidden p-2 rounded-md ${isDark ? "text-neutral-400 hover:bg-neutral-800" : "text-neutral-600 hover:bg-neutral-100"}`}
               aria-label="Open sidebar"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <h1 className="text-lg font-semibold text-neutral-800">{title}</h1>
+            <h1 className={`text-lg font-semibold ${isDark ? "text-neutral-200" : "text-neutral-800"}`}>{title}</h1>
           </div>
           <div className="flex items-center gap-3">
             <span className={`hidden sm:inline-block text-xs font-semibold px-2 py-0.5 rounded-full ${badge.cls}`}>

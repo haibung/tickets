@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -443,57 +443,59 @@ function Settings({ user }) {
   );
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
-const TABS = [
-  { id:"overview", label:"Overview" },
-  { id:"tickets",  label:"Tiket Saya" },
-  { id:"settings", label:"Pengaturan" },
-];
+// ── Per-tab visual containers ─────────────────────────────────────────────────
+const TAB_WRAP = {
+  overview: {
+    style: { background: "radial-gradient(ellipse 90% 45% at 50% -5%, rgba(232,65,30,0.08) 0%, #0d0d0d 65%)" },
+    cls: "rounded-2xl p-5 md:p-6",
+  },
+  tickets: {
+    style: { background: "linear-gradient(145deg, #080c18 0%, #0b0b10 100%)" },
+    cls: "rounded-2xl p-5 md:p-6 border-l-2 border-secondary/30",
+  },
+  settings: {
+    style: { background: "linear-gradient(145deg, #07100a 0%, #0c0c0c 100%)" },
+    cls: "rounded-2xl p-5 md:p-6 border-t border-emerald-900/30",
+  },
+};
 
+// ── Page ──────────────────────────────────────────────────────────────────────
 export default function UserDashboard() {
   const router = useRouter();
   const [tickets, setTickets] = useState(PLACEHOLDER_TICKETS);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState("overview");
   const [user, setUser] = useState(null);
+  const loadedRef = useRef(false);
+
+  const tab = (router.query.tab ?? "overview");
 
   useEffect(() => {
     if (!requireAuth(router, ["user","admin","organizer"])) return;
     setUser(getUser());
+    if (loadedRef.current) return;
+    loadedRef.current = true;
     fetchMyOrders()
       .then(d => { const l = Array.isArray(d)?d:d?.orders??d?.data??[]; if(l.length) setTickets(l); })
       .catch(()=>{})
       .finally(()=>setLoading(false));
   }, [router]);
 
+  const wrap = TAB_WRAP[tab] ?? TAB_WRAP.overview;
+
   return (
     <>
       <Head><title>Dashboard – TiketKu</title></Head>
-      <DashboardLayout title="Dashboard">
-        {/* tab bar */}
-        <div className="flex gap-1 mb-6 border-b border-neutral-800 pb-px">
-          {TABS.map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)}
-              className={`px-4 py-2 text-sm transition-colors relative ${
-                tab === t.id ? "text-white font-semibold" : "text-neutral-500 hover:text-neutral-300"
-              }`}>
-              {t.label}
-              {tab === t.id && <span className="absolute bottom-0 left-0 w-full h-px bg-primary" />}
-            </button>
-          ))}
-        </div>
-
-        {/* content */}
+      <DashboardLayout title="Dashboard" variant="dark">
         {loading ? (
           <div className="grid grid-cols-3 gap-3">
             {[...Array(3)].map((_,i) => <div key={i} className="bg-neutral-900 rounded-xl h-20 animate-pulse" />)}
           </div>
         ) : (
-          <>
+          <div className={wrap.cls} style={wrap.style}>
             {tab === "overview"  && <Overview  tickets={tickets} user={user} />}
             {tab === "tickets"   && <MyTickets tickets={tickets} />}
             {tab === "settings"  && <Settings  user={user} />}
-          </>
+          </div>
         )}
       </DashboardLayout>
     </>
