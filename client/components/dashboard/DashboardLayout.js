@@ -5,11 +5,11 @@ import { getUser, getRole, clearAuth } from "@/lib/auth";
 
 const NAV = {
   admin: [
-    { href: "/dashboard/admin", label: "Overview", icon: "📊" },
-    { href: "/dashboard/admin/transactions", label: "Transactions", icon: "💳" },
-    { href: "/dashboard/admin/events", label: "Event Types", icon: "🎪" },
-    { href: "/dashboard/admin/tickets", label: "Tickets", icon: "🎟️" },
-    { href: "/dashboard/admin/users", label: "Users", icon: "👥" },
+    { href: "/dashboard/admin?tab=overview",     label: "Overview",    icon: "📊" },
+    { href: "/dashboard/admin?tab=creators",     label: "Creators",    icon: "👤" },
+    { href: "/dashboard/admin?tab=events",       label: "Events",      icon: "🎪" },
+    { href: "/dashboard/admin?tab=users",        label: "Users",       icon: "👥" },
+    { href: "/dashboard/admin?tab=withdrawals",  label: "Withdrawals", icon: "💸" },
   ],
   organizer: [
     { href: "/dashboard/organizer?tab=analytics", label: "Analytics",  icon: "📊" },
@@ -53,6 +53,7 @@ export default function DashboardLayout({ children, title, variant = "light" }) 
   const DEFAULT_TABS = {
     "/dashboard/user": "overview",
     "/dashboard/organizer": "analytics",
+    "/dashboard/admin": "overview",
   };
 
   const isActive = (href) => {
