@@ -5,11 +5,47 @@ import { useRouter } from "next/router";
 import { login } from "@/lib/api";
 import { saveAuth, dashboardPath } from "@/lib/auth";
 
+// ── tiny icon helpers (inline SVG – no extra dep) ─────────────────────────────
+function IconMail() {
+  return (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <path d="m2 7 10 7 10-7" />
+    </svg>
+  );
+}
+function IconLock() {
+  return (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+      <rect x="3" y="11" width="18" height="11" rx="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
+function IconClose() {
+  return (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  );
+}
+function IconSpinner() {
+  return (
+    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+    </svg>
+  );
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotSent, setForgotSent] = useState(false);
 
   const handleChange = (e) =>
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
@@ -20,7 +56,6 @@ export default function LoginPage() {
     setError(null);
     try {
       const data = await login(form);
-      // Backend expected to return { token, role, name, email, id }
       saveAuth({
         token: data?.token,
         user: {
@@ -33,109 +68,153 @@ export default function LoginPage() {
       const redirect = router.query.redirect ?? dashboardPath(data?.role ?? "user");
       router.push(redirect);
     } catch (err) {
-      setError(err.message || "Invalid email or password.");
+      setError(err.message || "Email/password yang kamu masukkan tidak sesuai.");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleForgot = (e) => {
+    e.preventDefault();
+    setForgotSent(true);
+    setTimeout(() => {
+      setShowForgot(false);
+      setForgotSent(false);
+      setForgotEmail("");
+    }, 2500);
+  };
+
   return (
     <>
-      <Head>
-        <title>Login – TiketKu</title>
-      </Head>
+      <Head><title>Login – TiketKu</title></Head>
 
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center px-4 py-12">
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
+
+          {/* Logo */}
           <div className="text-center mb-8">
             <Link href="/" className="inline-block">
-              <span className="text-3xl font-extrabold text-primary">
-                Tiket<span className="text-secondary">Ku</span>
+              <span className="text-3xl font-extrabold tracking-tight text-white">
+                Tiket<span className="text-neutral-400">Ku</span>
               </span>
             </Link>
-            <h1 className="mt-4 text-xl font-bold text-neutral-800">Welcome back!</h1>
-            <p className="text-sm text-neutral-500 mt-1">Sign in to your account</p>
+            <h1 className="mt-3 text-lg font-semibold text-white">Selamat datang kembali</h1>
+            <p className="text-sm text-neutral-500 mt-1">Masuk ke akun Anda</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm p-8">
+          {/* Card */}
+          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-8 shadow-2xl">
+
+            {/* Error */}
             {error && (
-              <div className="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
-                {error}
+              <div className="mb-5 flex items-start gap-2 bg-neutral-800/80 border border-neutral-700 text-neutral-300 text-sm rounded-xl px-4 py-3">
+                <span className="mt-0.5 text-neutral-500 flex-shrink-0">✕</span>
+                <span>{error}</span>
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
-                  Email Address
+                <label className="block text-[11px] uppercase tracking-wider text-neutral-500 mb-1.5">
+                  Email
                 </label>
-                <input
-                  required
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="you@example.com"
-                  className="w-full border border-neutral-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-              <div>
-                <div className="flex justify-between mb-1">
-                  <label className="text-sm font-medium text-neutral-700">Password</label>
-                  <Link href="/auth/forgot-password" className="text-xs text-primary hover:underline">
-                    Forgot password?
-                  </Link>
+                <div className="relative">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-600">
+                    <IconMail />
+                  </span>
+                  <input
+                    required
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="kamu@example.com"
+                    className="w-full bg-neutral-800 border border-neutral-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-500 transition-colors"
+                  />
                 </div>
-                <input
-                  required
-                  type="password"
-                  name="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  className="w-full border border-neutral-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                />
               </div>
 
+              {/* Password */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[11px] uppercase tracking-wider text-neutral-500">
+                    Password
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowForgot(true)}
+                    className="text-[11px] text-neutral-500 hover:text-neutral-300 transition-colors"
+                  >
+                    Lupa password?
+                  </button>
+                </div>
+                <div className="relative">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-600">
+                    <IconLock />
+                  </span>
+                  <input
+                    required
+                    type="password"
+                    name="password"
+                    value={form.password}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    className="w-full bg-neutral-800 border border-neutral-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full py-3 rounded-full font-semibold text-sm transition-colors ${
-                  loading
-                    ? "bg-neutral-200 text-neutral-400 cursor-not-allowed"
-                    : "bg-primary text-white hover:bg-primary-dark"
-                }`}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-colors bg-white text-black hover:bg-neutral-200 disabled:bg-neutral-700 disabled:text-neutral-500 disabled:cursor-not-allowed mt-2"
               >
-                {loading ? "Signing in..." : "Sign In"}
+                {loading ? (
+                  <>
+                    <IconSpinner />
+                    <span>Masuk...</span>
+                  </>
+                ) : (
+                  "Masuk"
+                )}
               </button>
             </form>
 
-            <p className="text-center text-sm text-neutral-500 mt-6">
-              Don&apos;t have an account?{" "}
-              <Link href="/auth/register" className="text-primary font-semibold hover:underline">
-                Register
+            {/* Register link */}
+            <p className="text-center text-sm text-neutral-600 mt-6">
+              Belum punya akun?{" "}
+              <Link href="/auth/register" className="text-neutral-300 font-semibold hover:text-white transition-colors">
+                Daftar
               </Link>
             </p>
 
-            <div className="mt-6 border-t border-neutral-100 pt-5">
-              <p className="text-xs text-center text-neutral-400 mb-3">— Demo login (no backend needed) —</p>
+            {/* Demo shortcuts */}
+            <div className="mt-6 pt-5 border-t border-neutral-800">
+              <p className="text-[11px] text-center text-neutral-600 mb-3 uppercase tracking-wider">Demo login</p>
               <div className="flex gap-2">
                 {[
-                  { role: "admin",     label: "Admin",     color: "bg-red-50 text-red-600 hover:bg-red-100 border-red-200" },
-                  { role: "organizer", label: "Organizer", color: "bg-blue-50 text-blue-600 hover:bg-blue-100 border-blue-200" },
-                  { role: "user",      label: "User",      color: "bg-green-50 text-green-600 hover:bg-green-100 border-green-200" },
-                ].map(({ role, label, color }) => (
+                  { role: "admin",     label: "Admin" },
+                  { role: "organizer", label: "Organizer" },
+                  { role: "user",      label: "User" },
+                ].map(({ role, label }) => (
                   <button
                     key={role}
                     type="button"
                     onClick={() => {
                       saveAuth({
                         token: `demo-${role}-token`,
-                        user: { id: role === "admin" ? 1 : role === "organizer" ? 2 : 3, name: `Demo ${label}`, email: `${role}@demo.com`, role },
+                        user: {
+                          id: role === "admin" ? 1 : role === "organizer" ? 2 : 3,
+                          name: `Demo ${label}`,
+                          email: `${role}@demo.com`,
+                          role,
+                        },
                       });
                       router.push(dashboardPath(role));
                     }}
-                    className={`flex-1 py-2 text-xs font-semibold rounded-lg border transition-colors ${color}`}
+                    className="flex-1 py-2 text-[11px] font-semibold rounded-xl border border-neutral-700 text-neutral-400 hover:border-neutral-500 hover:text-white transition-colors"
                   >
                     {label}
                   </button>
@@ -145,6 +224,58 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
+      {/* Forgot Password Modal */}
+      {showForgot && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
+          <div className="bg-neutral-900 border border-neutral-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <p className="text-sm font-semibold text-white">Reset Password</p>
+                <p className="text-[11px] text-neutral-500 mt-0.5">
+                  Kami akan kirimkan link ke email Anda
+                </p>
+              </div>
+              <button
+                onClick={() => { setShowForgot(false); setForgotSent(false); setForgotEmail(""); }}
+                className="text-neutral-600 hover:text-white transition-colors p-1"
+              >
+                <IconClose />
+              </button>
+            </div>
+
+            {forgotSent ? (
+              <div className="text-center py-4">
+                <p className="text-sm text-neutral-300">✓ Link reset dikirim ke</p>
+                <p className="text-white font-semibold mt-1">{forgotEmail}</p>
+                <p className="text-[11px] text-neutral-600 mt-3">Periksa folder spam jika tidak muncul.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleForgot} className="space-y-4">
+                <div className="relative">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-600">
+                    <IconMail />
+                  </span>
+                  <input
+                    required
+                    type="email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    placeholder="kamu@example.com"
+                    className="w-full bg-neutral-800 border border-neutral-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-500 transition-colors"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-neutral-200 transition-colors"
+                >
+                  Kirim Link Reset
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }
