@@ -12,11 +12,12 @@ const NAV = {
     { href: "/dashboard/admin/users", label: "Users", icon: "👥" },
   ],
   organizer: [
-    { href: "/dashboard/organizer", label: "Overview", icon: "📊" },
-    { href: "/dashboard/organizer/events", label: "My Events", icon: "🎪" },
-    { href: "/dashboard/organizer/tickets", label: "Tickets", icon: "🎟️" },
-    { href: "/dashboard/organizer/sales", label: "Sales", icon: "📈" },
-    { href: "/dashboard/organizer/withdrawals", label: "Withdrawals", icon: "💰" },
+    { href: "/dashboard/organizer?tab=analytics", label: "Analytics",  icon: "📊" },
+    { href: "/dashboard/organizer?tab=events",    label: "Events",     icon: "🎪" },
+    { href: "/dashboard/organizer?tab=tickets",   label: "Tickets",    icon: "🎟️" },
+    { href: "/dashboard/organizer?tab=scanner",   label: "QR Scanner", icon: "📷" },
+    { href: "/dashboard/organizer?tab=wallet",    label: "Wallet",     icon: "💰" },
+    { href: "/dashboard/organizer?tab=settings",  label: "Settings",   icon: "⚙️" },
   ],
   user: [
     { href: "/dashboard/user?tab=overview", label: "Overview",   icon: "🏠" },
@@ -49,13 +50,19 @@ export default function DashboardLayout({ children, title, variant = "light" }) 
     router.push("/auth/login");
   };
 
+  const DEFAULT_TABS = {
+    "/dashboard/user": "overview",
+    "/dashboard/organizer": "analytics",
+  };
+
   const isActive = (href) => {
     if (href.includes("?")) {
       const [path, qs] = href.split("?");
       if (router.pathname !== path) return false;
       const expected = new URLSearchParams(qs);
       for (const [k, v] of expected.entries()) {
-        const actual = router.query[k] ?? (k === "tab" ? "overview" : undefined);
+        const defaultVal = k === "tab" ? (DEFAULT_TABS[path] ?? "overview") : undefined;
+        const actual = router.query[k] ?? defaultVal;
         if (actual !== v) return false;
       }
       return true;
