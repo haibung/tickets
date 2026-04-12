@@ -15,193 +15,143 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { href: "/events", label: "Browse Events" },
+    { href: "/events", label: "Browse" },
     { href: "/events?category=music", label: "Music" },
     { href: "/events?category=sports", label: "Sports" },
     { href: "/events?category=festival", label: "Festival" },
   ];
 
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50">
+    <nav className="bg-white border-b border-neutral-100 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl font-extrabold text-primary">
-                Tiket<span className="text-secondary">Ku</span>
-              </span>
-            </Link>
-          </div>
+        <div className="flex items-center justify-between h-14 gap-4">
 
-          {/* Desktop search bar */}
-          <form
-            onSubmit={handleSearch}
-            className="hidden md:flex flex-1 mx-8 max-w-xl"
-          >
+          {/* Logo */}
+          <Link href="/" className="flex-shrink-0 flex items-center gap-1">
+            <span className="text-xl font-extrabold text-neutral-900 tracking-tight">
+              Tiket<span className="text-primary">Ku</span>
+            </span>
+          </Link>
+
+          {/* Desktop search */}
+          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-sm">
             <div className="relative w-full">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 pointer-events-none"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+              </svg>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search events, concerts, sports..."
-                className="w-full pl-4 pr-12 py-2 rounded-full border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                placeholder="Search events…"
+                className="w-full pl-9 pr-4 py-1.5 bg-neutral-50 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
               />
-              <button
-                type="submit"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-700 hover:text-primary"
-                aria-label="Search"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
-                  />
-                </svg>
-              </button>
             </div>
           </form>
 
           {/* Desktop nav links */}
-          <div className="hidden md:flex items-center gap-6">
-            {navLinks.slice(0, 2).map((link) => (
+          <div className="hidden md:flex items-center gap-5">
+            {navLinks.slice(0, 3).map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={`text-sm font-medium transition-colors ${
-                  router.pathname === link.href
+                  router.asPath === link.href
                     ? "text-primary"
-                    : "text-neutral-700 hover:text-primary"
+                    : "text-neutral-600 hover:text-neutral-900"
                 }`}
               >
                 {link.label}
               </Link>
             ))}
+          </div>
+
+          {/* Auth */}
+          <div className="hidden md:flex items-center gap-2">
             <Link
               href="/auth/login"
-              className="text-sm font-medium text-neutral-700 hover:text-primary transition-colors"
+              className="text-sm font-medium text-neutral-700 hover:text-neutral-900 px-3 py-1.5 transition-colors"
             >
-              Login
+              Log in
             </Link>
             <Link
               href="/auth/register"
-              className="bg-primary text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-primary-dark transition-colors"
+              className="text-sm font-semibold bg-primary text-white px-4 py-1.5 rounded-full hover:bg-primary-dark transition-colors"
             >
-              Register
+              Sign up
             </Link>
           </div>
 
-          {/* Mobile menu toggle */}
+          {/* Mobile toggle */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2 rounded-md text-neutral-700 hover:bg-neutral-100 focus:outline-none"
+            className="md:hidden p-2 rounded-lg text-neutral-700 hover:bg-neutral-100 focus:outline-none"
             aria-label="Toggle menu"
           >
             {menuOpen ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             )}
           </button>
         </div>
-
-        {/* Mobile menu */}
-        {menuOpen && (
-          <div className="md:hidden border-t border-neutral-100 py-4 space-y-3">
-            <form onSubmit={handleSearch} className="px-2">
-              <div className="relative w-full">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search events..."
-                  className="w-full pl-4 pr-12 py-2 rounded-full border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-700"
-                  aria-label="Search"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </form>
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-primary rounded-md"
-              >
-                {link.label}
-              </Link>
-            ))}
-            <div className="flex gap-3 px-4 pt-2">
-              <Link
-                href="/auth/login"
-                onClick={() => setMenuOpen(false)}
-                className="flex-1 text-center text-sm font-medium border border-primary text-primary py-2 rounded-full hover:bg-primary hover:text-white transition-colors"
-              >
-                Login
-              </Link>
-              <Link
-                href="/auth/register"
-                onClick={() => setMenuOpen(false)}
-                className="flex-1 text-center text-sm font-semibold bg-primary text-white py-2 rounded-full hover:bg-primary-dark transition-colors"
-              >
-                Register
-              </Link>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Mobile drawer */}
+      {menuOpen && (
+        <div className="md:hidden bg-white border-t border-neutral-100 px-4 pb-5 pt-3 space-y-2">
+          <form onSubmit={handleSearch}>
+            <div className="relative w-full mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+              </svg>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search events…"
+                className="w-full pl-9 pr-4 py-2 bg-neutral-50 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          </form>
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setMenuOpen(false)}
+              className="block px-3 py-2 text-sm text-neutral-700 hover:text-primary hover:bg-neutral-50 rounded-lg transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
+          <div className="flex gap-2 pt-2">
+            <Link
+              href="/auth/login"
+              onClick={() => setMenuOpen(false)}
+              className="flex-1 text-center text-sm font-medium border border-neutral-200 text-neutral-700 py-2 rounded-full hover:border-primary hover:text-primary transition-colors"
+            >
+              Log in
+            </Link>
+            <Link
+              href="/auth/register"
+              onClick={() => setMenuOpen(false)}
+              className="flex-1 text-center text-sm font-semibold bg-primary text-white py-2 rounded-full hover:bg-primary-dark transition-colors"
+            >
+              Sign up
+            </Link>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
