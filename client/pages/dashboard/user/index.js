@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -6,187 +6,112 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { requireAuth, getUser } from "@/lib/auth";
 import { fetchMyOrders } from "@/lib/api";
 
-// ─── Dummy data ────────────────────────────────────────────────────────────────
-
+// ── placeholder data ──────────────────────────────────────────────────────────
 const PLACEHOLDER_TICKETS = [
-  {
-    id: "TKT-0091",
-    event: "Konser Sheila On 7 – KSATRIA",
-    date: "30 Agustus 2025",
-    time: "20:00",
-    location: "Istora Senayan, Jakarta",
-    type: "Category A",
-    price: 550000,
-    status: "active",
-    orderedAt: "2025-04-10",
-  },
-  {
-    id: "TKT-0078",
-    event: "Noah Live in Concert 2025",
-    date: "14 September 2025",
-    time: "19:30",
-    location: "Gelora Bung Karno, Jakarta",
-    type: "VVIP",
-    price: 950000,
-    status: "active",
-    orderedAt: "2025-04-05",
-  },
-  {
-    id: "TKT-0055",
-    event: "Dewa 19 Reunion Tour",
-    date: "5 Oktober 2025",
-    time: "20:00",
-    location: "JIExpo Kemayoran, Jakarta",
-    type: "General",
-    price: 350000,
-    status: "active",
-    orderedAt: "2025-03-28",
-  },
-  {
-    id: "TKT-0044",
-    event: "Java Jazz Festival 2024",
-    date: "2 Juni 2024",
-    time: "10:00",
-    location: "JIExpo Kemayoran, Jakarta",
-    type: "General Admission",
-    price: 500000,
-    status: "completed",
-    orderedAt: "2024-05-01",
-  },
-  {
-    id: "TKT-0032",
-    event: "Coldplay – Music of the Spheres",
-    date: "15 November 2024",
-    time: "19:00",
-    location: "Gelora Bung Karno, Jakarta",
-    type: "Category 2",
-    price: 850000,
-    status: "completed",
-    orderedAt: "2024-10-01",
-  },
+  { id: "TKT-0091", event: "Konser Sheila On 7 – KSATRIA",      date: "30 Agustus 2025",  time: "20:00", location: "Istora Senayan, Jakarta",      type: "Category A",      price: 550000,  status: "active",    orderedAt: "2025-04-10" },
+  { id: "TKT-0078", event: "Noah Live in Concert 2025",           date: "14 September 2025",time: "19:30", location: "Gelora Bung Karno, Jakarta",   type: "VVIP",            price: 950000,  status: "active",    orderedAt: "2025-04-05" },
+  { id: "TKT-0055", event: "Dewa 19 Reunion Tour",                date: "5 Oktober 2025",   time: "20:00", location: "JIExpo Kemayoran, Jakarta",    type: "General",         price: 350000,  status: "active",    orderedAt: "2025-03-28" },
+  { id: "TKT-0044", event: "Java Jazz Festival 2024",             date: "2 Juni 2024",      time: "10:00", location: "JIExpo Kemayoran, Jakarta",    type: "General Admission",price: 500000, status: "completed", orderedAt: "2024-05-01" },
+  { id: "TKT-0032", event: "Coldplay – Music of the Spheres",     date: "15 November 2024", time: "19:00", location: "Gelora Bung Karno, Jakarta",   type: "Category 2",      price: 850000,  status: "completed", orderedAt: "2024-10-01" },
 ];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
+// ── helpers ───────────────────────────────────────────────────────────────────
 const fmtIDR = (n) =>
   new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(n);
 
-// Parse Indonesian date string to ISO for Google Calendar
 const ID_MONTHS = {
-  Januari: "01", Februari: "02", Maret: "03", April: "04",
-  Mei: "05", Juni: "06", Juli: "07", Agustus: "08",
-  September: "09", Oktober: "10", November: "11", Desember: "12",
+  Januari:"01",Februari:"02",Maret:"03",April:"04",Mei:"05",Juni:"06",
+  Juli:"07",Agustus:"08",September:"09",Oktober:"10",November:"11",Desember:"12",
 };
 
-function parseIdDate(dateStr) {
-  const match = dateStr.match(/(\d+)\s+(\w+)\s+(\d{4})/);
-  if (!match) return null;
-  const [, day, monthId, year] = match;
-  const month = ID_MONTHS[monthId];
-  if (!month) return null;
-  return `${year}${month}${day.padStart(2, "0")}`;
+function parseIdDate(s) {
+  const m = s.match(/(\d+)\s+(\w+)\s+(\d{4})/);
+  if (!m) return null;
+  const mo = ID_MONTHS[m[2]];
+  return mo ? `${m[3]}${mo}${m[1].padStart(2,"0")}` : null;
 }
 
-function buildGCalUrl(ticket) {
-  const isoDate = parseIdDate(ticket.date);
-  if (!isoDate) return null;
-  const timeStr = ticket.time?.replace(":", "") ?? "180000";
-  const start = `${isoDate}T${timeStr}00`;
-  const endHour = parseInt(timeStr.slice(0, 2)) + 2;
-  const end = `${isoDate}T${String(endHour).padStart(2, "0")}${timeStr.slice(2)}00`;
+function buildGCalUrl(t) {
+  const d = parseIdDate(t.date);
+  if (!d) return null;
+  const ts = (t.time ?? "19:00").replace(":","");
+  const eh = String(parseInt(ts.slice(0,2)) + 2).padStart(2,"0");
   const params = new URLSearchParams({
-    action: "TEMPLATE",
-    text: ticket.event,
-    dates: `${start}/${end}`,
-    location: ticket.location,
-    details: `Tiket: ${ticket.type} – TiketKu ID: ${ticket.id}`,
+    action: "TEMPLATE", text: t.event,
+    dates: `${d}T${ts}00/${d}T${eh}${ts.slice(2)}00`,
+    location: t.location,
+    details: `Tiket: ${t.type} · ${t.id}`,
   });
   return `https://calendar.google.com/calendar/render?${params}`;
 }
 
-// Deterministic QR grid: 21×21
-function generateQR(ticketId) {
-  const seed = ticketId.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  const grid = [];
-  for (let y = 0; y < 21; y++) {
-    const row = [];
-    for (let x = 0; x < 21; x++) {
-      // Finder patterns (corners)
-      const inFinder =
-        (x < 8 && y < 8) ||
-        (x > 12 && y < 8) ||
-        (x < 8 && y > 12);
-      if (inFinder) {
-        const fx = x < 8 ? x : x - 14;
-        const fy = y < 8 ? y : y - 14;
-        const outerRing = fx === 0 || fx === 6 || fy === 0 || fy === 6;
-        const inner = fx >= 2 && fx <= 4 && fy >= 2 && fy <= 4;
-        row.push(outerRing || inner ? 1 : 0);
-      } else {
-        row.push((seed + x * 13 + y * 17) % 2);
+function generateQR(id) {
+  const seed = id.split("").reduce((a,c) => a + c.charCodeAt(0), 0);
+  return Array.from({length:21}, (_,y) =>
+    Array.from({length:21}, (_,x) => {
+      const fin = (x<8&&y<8)||(x>12&&y<8)||(x<8&&y>12);
+      if (fin) {
+        const fx = x<8?x:x-14, fy = y<8?y:y-14;
+        return (fx===0||fx===6||fy===0||fy===6||( fx>=2&&fx<=4&&fy>=2&&fy<=4)) ? 1 : 0;
       }
-    }
-    grid.push(row);
-  }
-  return grid;
+      return (seed + x*13 + y*17) % 2;
+    })
+  );
 }
 
-// ─── Status badge ─────────────────────────────────────────────────────────────
+// ── tiny shared primitives ────────────────────────────────────────────────────
+const CARD = "bg-neutral-900 border border-neutral-800 rounded-xl";
 
 const STATUS = {
-  active:    { cls: "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30", label: "Aktif" },
-  completed: { cls: "bg-neutral-700/50 text-neutral-400 border border-neutral-600/30", label: "Selesai" },
-  cancelled: { cls: "bg-red-500/20 text-red-400 border border-red-500/30", label: "Dibatalkan" },
+  active:    { dot: "bg-emerald-400", label: "Aktif" },
+  completed: { dot: "bg-neutral-600", label: "Selesai" },
+  cancelled: { dot: "bg-red-500",     label: "Batal" },
 };
 
-// ─── QR Modal ────────────────────────────────────────────────────────────────
+function Badge({ status }) {
+  const s = STATUS[status] ?? STATUS.cancelled;
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[11px] text-neutral-400">
+      <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+      {s.label}
+    </span>
+  );
+}
 
+// ── QR modal ──────────────────────────────────────────────────────────────────
 function QRModal({ ticket, onClose }) {
   const grid = generateQR(ticket.id);
   const gcUrl = buildGCalUrl(ticket);
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-neutral-900 border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-        <button onClick={onClose} className="absolute top-4 right-4 text-neutral-400 hover:text-white text-xl leading-none">✕</button>
-        <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">E-Ticket</p>
-        <h2 className="text-white font-extrabold text-lg leading-snug mb-0.5">{ticket.event}</h2>
-        <p className="text-neutral-400 text-xs mb-4">{ticket.id}</p>
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+      <div className={`relative ${CARD} p-6 w-full max-w-xs`}>
+        <button onClick={onClose} className="absolute top-4 right-4 text-neutral-500 hover:text-white text-sm">✕</button>
+
+        <p className="text-[10px] uppercase tracking-widest text-neutral-500 mb-1">{ticket.id}</p>
+        <p className="text-white font-semibold text-sm leading-snug mb-4">{ticket.event}</p>
 
         {/* QR */}
         <div className="flex justify-center mb-4">
-          <div className="bg-white p-3 rounded-xl inline-block">
-            <div className="grid" style={{ gridTemplateColumns: `repeat(21, 10px)`, gap: "1px" }}>
-              {grid.flat().map((cell, i) => (
-                <div key={i} style={{ width: 10, height: 10, backgroundColor: cell ? "#000" : "#fff" }} />
+          <div className="bg-white p-2.5 rounded-lg">
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(21,9px)", gap:"1px" }}>
+              {grid.flat().map((c,i) => (
+                <div key={i} style={{ width:9, height:9, backgroundColor: c ? "#000":"#fff" }} />
               ))}
             </div>
           </div>
         </div>
 
-        <div className="space-y-1.5 text-sm text-neutral-300 mb-4">
-          <div className="flex items-center gap-2">
-            <span className="text-neutral-500">📅</span>
-            <span>{ticket.date} · {ticket.time} WIB</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-neutral-500">📍</span>
-            <span>{ticket.location}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-neutral-500">🎟️</span>
-            <span>{ticket.type} · {fmtIDR(ticket.price)}</span>
-          </div>
+        <div className="text-xs text-neutral-400 space-y-1 mb-4">
+          <p>{ticket.date} · {ticket.time} WIB</p>
+          <p>{ticket.location}</p>
+          <p>{ticket.type} · {fmtIDR(ticket.price)}</p>
         </div>
 
         {gcUrl && (
-          <a
-            href={gcUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white text-sm font-semibold px-4 py-2.5 rounded-full transition-colors"
-          >
-            📆 Tambah ke Google Calendar
+          <a href={gcUrl} target="_blank" rel="noreferrer"
+             className="block w-full text-center text-xs text-neutral-300 hover:text-white border border-neutral-700 hover:border-neutral-500 rounded-lg py-2 transition-colors">
+            Tambah ke Google Calendar
           </a>
         )}
       </div>
@@ -194,169 +119,124 @@ function QRModal({ ticket, onClose }) {
   );
 }
 
-// ─── Overview Tab ─────────────────────────────────────────────────────────────
-
+// ── Overview tab ──────────────────────────────────────────────────────────────
 function Overview({ tickets, user }) {
-  const active = tickets.filter((t) => t.status === "active");
-  const totalSpend = tickets.reduce((s, t) => s + t.price, 0);
-  const recent = [...tickets].sort((a, b) => b.orderedAt.localeCompare(a.orderedAt)).slice(0, 3);
-
-  const stats = [
-    { label: "Tiket Aktif", value: active.length, icon: "🎟️", accent: "from-primary/30 to-primary/10" },
-    { label: "Total Pengeluaran", value: fmtIDR(totalSpend), icon: "💳", accent: "from-blue-500/30 to-blue-500/10" },
-    { label: "Event Mendatang", value: active.length, icon: "📅", accent: "from-emerald-500/30 to-emerald-500/10" },
-  ];
+  const active = tickets.filter(t => t.status === "active");
+  const totalSpend = tickets.reduce((s,t) => s + t.price, 0);
+  const recent = [...tickets].sort((a,b) => b.orderedAt.localeCompare(a.orderedAt)).slice(0,3);
 
   return (
-    <div className="space-y-6">
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {stats.map((s) => (
-          <div
-            key={s.label}
-            className={`bg-gradient-to-br ${s.accent} backdrop-blur-xl rounded-2xl p-5 border border-white/10`}
-          >
-            <div className="text-2xl mb-2">{s.icon}</div>
-            <p className="text-2xl font-extrabold text-white leading-none mb-1">{s.value}</p>
-            <p className="text-xs text-neutral-400">{s.label}</p>
+    <div className="space-y-5">
+      {/* stats row */}
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: "Tiket Aktif",       value: active.length },
+          { label: "Total Belanja",     value: fmtIDR(totalSpend) },
+          { label: "Event Mendatang",   value: active.length },
+        ].map(s => (
+          <div key={s.label} className={`${CARD} p-4`}>
+            <p className="text-xl font-bold text-white">{s.value}</p>
+            <p className="text-[11px] text-neutral-500 mt-0.5">{s.label}</p>
           </div>
         ))}
       </div>
 
-      {/* Recent Activity */}
-      <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5">
-        <p className="text-xs font-bold uppercase tracking-widest text-neutral-400 mb-4">Aktivitas Terbaru</p>
+      {/* recent activity */}
+      <div className={CARD}>
+        <div className="px-4 pt-4 pb-3 border-b border-neutral-800">
+          <p className="text-[11px] uppercase tracking-widest text-neutral-500">Aktivitas Terbaru</p>
+        </div>
         {recent.length === 0 ? (
-          <p className="text-sm text-neutral-500 text-center py-6">Belum ada aktivitas.</p>
+          <p className="text-sm text-neutral-600 text-center py-8">Belum ada aktivitas.</p>
         ) : (
-          <div className="space-y-3">
-            {recent.map((t) => (
-              <div key={t.id} className="flex items-center justify-between gap-4 py-2 border-b border-white/5 last:border-0">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${t.status === "active" ? "bg-emerald-400" : "bg-neutral-600"}`} />
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-white truncate">{t.event}</p>
-                    <p className="text-xs text-neutral-500">{t.status === "active" ? "Pembelian" : "Event Selesai"} · {t.orderedAt}</p>
-                  </div>
+          <ul>
+            {recent.map((t, i) => (
+              <li key={t.id} className={`flex items-center justify-between px-4 py-3 ${i < recent.length-1 ? "border-b border-neutral-800":""}`}>
+                <div className="min-w-0 mr-4">
+                  <p className="text-sm text-white truncate">{t.event}</p>
+                  <p className="text-[11px] text-neutral-500 mt-0.5">{t.orderedAt}</p>
                 </div>
-                <p className="text-sm font-bold text-white flex-shrink-0">{fmtIDR(t.price)}</p>
-              </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="text-sm text-white">{fmtIDR(t.price)}</p>
+                  <Badge status={t.status} />
+                </div>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </div>
 
-      {/* Welcome card */}
-      <div className="bg-gradient-to-r from-primary/20 to-primary/5 rounded-2xl border border-primary/20 p-5 flex items-center justify-between gap-4">
-        <div>
-          <p className="text-white font-bold mb-1">Selamat datang, {user?.name?.split(" ")[0] ?? "Pengguna"}! 👋</p>
-          <p className="text-neutral-400 text-sm">Kamu punya {active.length} tiket aktif yang menanti.</p>
-        </div>
-        <Link
-          href="/events"
-          className="flex-shrink-0 bg-primary text-white text-xs font-semibold px-4 py-2 rounded-full hover:bg-primary-dark transition-colors"
-        >
-          Jelajah Event
-        </Link>
+      {/* cta */}
+      <div className={`${CARD} px-4 py-3 flex items-center justify-between`}>
+        <p className="text-sm text-neutral-300">
+          Hai, <span className="text-white font-medium">{user?.name?.split(" ")[0] ?? "Pengguna"}</span> — {active.length} tiket aktif.
+        </p>
+        <Link href="/events" className="text-xs text-primary hover:underline flex-shrink-0">Jelajah →</Link>
       </div>
     </div>
   );
 }
 
-// ─── My Tickets Tab ───────────────────────────────────────────────────────────
-
+// ── My Tickets tab ────────────────────────────────────────────────────────────
 function MyTickets({ tickets }) {
   const [filter, setFilter] = useState("all");
-  const [qrTicket, setQrTicket] = useState(null);
+  const [qr, setQr] = useState(null);
 
-  const displayed = filter === "all" ? tickets : tickets.filter((t) => t.status === filter);
+  const shown = filter === "all" ? tickets : tickets.filter(t => t.status === filter);
+  const FILTERS = ["all","active","completed","cancelled"];
 
   return (
     <div className="space-y-4">
-      {/* Filter chips */}
+      {/* filter bar */}
       <div className="flex gap-2 flex-wrap">
-        {["all", "active", "completed", "cancelled"].map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors capitalize ${
-              filter === f
-                ? "bg-primary text-white"
-                : "bg-white/5 text-neutral-400 border border-white/10 hover:bg-white/10"
-            }`}
-          >
+        {FILTERS.map(f => (
+          <button key={f} onClick={() => setFilter(f)}
+            className={`px-3 py-1 rounded-md text-xs transition-colors ${
+              filter === f ? "bg-white text-black font-semibold" : "text-neutral-400 hover:text-white"
+            }`}>
             {f === "all" ? "Semua" : STATUS[f]?.label ?? f}
           </button>
         ))}
       </div>
 
-      {/* Table (desktop) / Cards (mobile) */}
-      {displayed.length === 0 ? (
-        <div className="bg-white/5 rounded-2xl border border-white/10 p-12 text-center">
-          <div className="text-4xl mb-3">🎟️</div>
-          <p className="text-white font-semibold mb-1">Tidak ada tiket</p>
-          <p className="text-neutral-500 text-sm mb-4">Belum ada tiket di kategori ini.</p>
-          <Link href="/events" className="inline-block bg-primary text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-primary-dark transition-colors">
-            Beli Tiket
-          </Link>
+      {shown.length === 0 ? (
+        <div className={`${CARD} p-10 text-center`}>
+          <p className="text-neutral-500 text-sm mb-3">Tidak ada tiket.</p>
+          <Link href="/events" className="text-xs text-primary hover:underline">Beli tiket →</Link>
         </div>
       ) : (
         <>
-          {/* Desktop table */}
-          <div className="hidden lg:block bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
+          {/* desktop table */}
+          <div className={`${CARD} hidden lg:block overflow-hidden`}>
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10 text-neutral-400 text-xs uppercase tracking-wider">
-                  <th className="text-left px-5 py-3">Event</th>
-                  <th className="text-left px-4 py-3">Tanggal</th>
-                  <th className="text-left px-4 py-3">Lokasi</th>
-                  <th className="text-left px-4 py-3">Tipe</th>
-                  <th className="text-left px-4 py-3">Harga</th>
-                  <th className="text-left px-4 py-3">Status</th>
-                  <th className="px-4 py-3" />
+                <tr className="border-b border-neutral-800">
+                  {["Event","Tanggal","Lokasi","Tipe","Harga","Status",""].map(h => (
+                    <th key={h} className="text-left text-[11px] uppercase tracking-wider text-neutral-500 px-4 py-3 font-normal">{h}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {displayed.map((t) => {
-                  const badge = STATUS[t.status] ?? STATUS.cancelled;
+                {shown.map((t,i) => {
                   const gcUrl = buildGCalUrl(t);
                   return (
-                    <tr key={t.id} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-                      <td className="px-5 py-3.5">
-                        <p className="font-semibold text-white leading-snug">{t.event}</p>
-                        <p className="text-xs text-neutral-500 font-mono">{t.id}</p>
+                    <tr key={t.id} className={`${i < shown.length-1 ? "border-b border-neutral-800":""} hover:bg-neutral-800/50 transition-colors`}>
+                      <td className="px-4 py-3">
+                        <p className="text-white font-medium text-sm">{t.event}</p>
+                        <p className="text-[11px] text-neutral-500 font-mono">{t.id}</p>
                       </td>
-                      <td className="px-4 py-3.5 text-neutral-300 whitespace-nowrap">{t.date}</td>
-                      <td className="px-4 py-3.5 text-neutral-400 max-w-[160px] truncate">{t.location}</td>
-                      <td className="px-4 py-3.5 text-neutral-300">{t.type}</td>
-                      <td className="px-4 py-3.5 text-white font-semibold whitespace-nowrap">{fmtIDR(t.price)}</td>
-                      <td className="px-4 py-3.5">
-                        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${badge.cls}`}>{badge.label}</span>
-                      </td>
-                      <td className="px-4 py-3.5">
-                        <div className="flex items-center gap-2">
-                          {t.status === "active" && (
-                            <>
-                              <button
-                                onClick={() => setQrTicket(t)}
-                                className="text-xs font-semibold text-primary hover:underline whitespace-nowrap"
-                              >
-                                Lihat QR
-                              </button>
-                              {gcUrl && (
-                                <a
-                                  href={gcUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="text-xs font-semibold text-neutral-400 hover:text-white whitespace-nowrap"
-                                  title="Tambah ke Google Calendar"
-                                >
-                                  📆
-                                </a>
-                              )}
-                            </>
-                          )}
-                        </div>
+                      <td className="px-4 py-3 text-neutral-400 text-sm whitespace-nowrap">{t.date}</td>
+                      <td className="px-4 py-3 text-neutral-400 text-sm max-w-[160px] truncate">{t.location}</td>
+                      <td className="px-4 py-3 text-neutral-400 text-sm">{t.type}</td>
+                      <td className="px-4 py-3 text-white text-sm whitespace-nowrap">{fmtIDR(t.price)}</td>
+                      <td className="px-4 py-3"><Badge status={t.status} /></td>
+                      <td className="px-4 py-3">
+                        {t.status === "active" && (
+                          <div className="flex gap-3">
+                            <button onClick={() => setQr(t)} className="text-xs text-primary hover:underline">QR</button>
+                            {gcUrl && <a href={gcUrl} target="_blank" rel="noreferrer" className="text-xs text-neutral-400 hover:text-white">Cal</a>}
+                          </div>
+                        )}
                       </td>
                     </tr>
                   );
@@ -365,45 +245,26 @@ function MyTickets({ tickets }) {
             </table>
           </div>
 
-          {/* Mobile cards */}
-          <div className="lg:hidden space-y-3">
-            {displayed.map((t) => {
-              const badge = STATUS[t.status] ?? STATUS.cancelled;
+          {/* mobile cards */}
+          <div className="lg:hidden space-y-2">
+            {shown.map(t => {
               const gcUrl = buildGCalUrl(t);
               return (
-                <div key={t.id} className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4">
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div>
-                      <p className="font-semibold text-white text-sm leading-snug">{t.event}</p>
-                      <p className="text-[11px] text-neutral-500 font-mono">{t.id}</p>
-                    </div>
-                    <span className={`flex-shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full ${badge.cls}`}>{badge.label}</span>
+                <div key={t.id} className={`${CARD} p-4`}>
+                  <div className="flex justify-between gap-2 mb-1">
+                    <p className="text-sm text-white font-medium leading-snug">{t.event}</p>
+                    <Badge status={t.status} />
                   </div>
-                  <div className="text-xs text-neutral-400 space-y-0.5 mb-3">
-                    <p>📅 {t.date} · {t.time} WIB</p>
-                    <p>📍 {t.location}</p>
-                    <p>🎟️ {t.type} · <span className="text-white font-semibold">{fmtIDR(t.price)}</span></p>
+                  <p className="text-[11px] text-neutral-500 mb-2">{t.date} · {t.location}</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-white">{fmtIDR(t.price)}</p>
+                    {t.status === "active" && (
+                      <div className="flex gap-3">
+                        <button onClick={() => setQr(t)} className="text-xs text-primary hover:underline">QR</button>
+                        {gcUrl && <a href={gcUrl} target="_blank" rel="noreferrer" className="text-xs text-neutral-400 hover:text-white">Kalender</a>}
+                      </div>
+                    )}
                   </div>
-                  {t.status === "active" && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setQrTicket(t)}
-                        className="flex-1 bg-primary/20 hover:bg-primary/30 text-primary text-xs font-semibold px-3 py-2 rounded-full transition-colors"
-                      >
-                        Lihat QR
-                      </button>
-                      {gcUrl && (
-                        <a
-                          href={gcUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="flex-1 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3 py-2 rounded-full transition-colors text-center"
-                        >
-                          📆 Reminder
-                        </a>
-                      )}
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -411,221 +272,182 @@ function MyTickets({ tickets }) {
         </>
       )}
 
-      {qrTicket && <QRModal ticket={qrTicket} onClose={() => setQrTicket(null)} />}
+      {qr && <QRModal ticket={qr} onClose={() => setQr(null)} />}
     </div>
   );
 }
 
-// ─── Settings Tab ─────────────────────────────────────────────────────────────
+// ── Settings tab ──────────────────────────────────────────────────────────────
+const COMMON_PW = ["123456","password","qwerty","abc123","111111","letmein"];
 
-const COMMON_PASSWORDS = ["123456", "password", "qwerty", "abc123", "111111", "letmein"];
-
-function validatePassword(pw, userName) {
+function validatePassword(pw, name) {
   if (pw.length < 8) return "Minimal 8 karakter.";
-  if (!/[A-Z]/.test(pw)) return "Harus mengandung huruf kapital.";
-  if (!/[a-z]/.test(pw)) return "Harus mengandung huruf kecil.";
-  if (!/[0-9]/.test(pw)) return "Harus mengandung angka.";
-  if (!/[*#@$%^&+=!?]/.test(pw)) return "Harus mengandung karakter spesial (*#@$%^&+=!?).";
-  if (userName && pw.toLowerCase().includes(userName.toLowerCase().split(" ")[0])) return "Password tidak boleh mengandung nama Anda.";
-  if (COMMON_PASSWORDS.some((c) => pw.toLowerCase().includes(c))) return "Password terlalu umum.";
+  if (!/[A-Z]/.test(pw)) return "Butuh huruf kapital.";
+  if (!/[a-z]/.test(pw)) return "Butuh huruf kecil.";
+  if (!/[0-9]/.test(pw)) return "Butuh angka.";
+  if (!/[*#@$%^&+=!?]/.test(pw)) return "Butuh karakter spesial (*#@$%^&+=!?).";
+  if (name && pw.toLowerCase().includes(name.toLowerCase().split(" ")[0])) return "Jangan gunakan nama Anda.";
+  if (COMMON_PW.some(c => pw.toLowerCase().includes(c))) return "Password terlalu umum.";
   return null;
+}
+
+function Field({ label, ...props }) {
+  return (
+    <div>
+      <label className="block text-[11px] uppercase tracking-wider text-neutral-500 mb-1">{label}</label>
+      <input {...props}
+        className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-500 transition-colors" />
+    </div>
+  );
+}
+
+function Toggle({ label, value, onChange }) {
+  return (
+    <div className="flex items-center justify-between py-2.5 border-b border-neutral-800 last:border-0">
+      <p className="text-sm text-neutral-300">{label}</p>
+      <button onClick={() => onChange(!value)}
+        className={`w-9 h-5 rounded-full transition-colors relative ${value ? "bg-primary" : "bg-neutral-700"}`}>
+        <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all`}
+              style={{ left: value ? "1.25rem" : "0.125rem" }} />
+      </button>
+    </div>
+  );
+}
+
+function Msg({ ok, text }) {
+  if (!text) return null;
+  return <p className={`text-xs ${ok ? "text-emerald-400" : "text-red-400"}`}>{text}</p>;
 }
 
 function Settings({ user }) {
   const [profile, setProfile] = useState({ name: user?.name ?? "", email: user?.email ?? "", phone: "" });
   const [profileMsg, setProfileMsg] = useState(null);
 
-  const [pwForm, setPwForm] = useState({ current: "", next: "", confirm: "" });
+  const [pw, setPw] = useState({ current:"", next:"", confirm:"" });
   const [pwMsg, setPwMsg] = useState(null);
   const [showPw, setShowPw] = useState(false);
 
   const [twoFA, setTwoFA] = useState(false);
-  const [tfaStep, setTfaStep] = useState(0); // 0=idle, 1=otp sent, 2=done
+  const [tfaStep, setTfaStep] = useState(0);
   const [otp, setOtp] = useState("");
   const [tfaMsg, setTfaMsg] = useState(null);
 
-  const [notifs, setNotifs] = useState({ email: true, sms: false, push: true, newsletter: false, promo: false });
+  const [notifs, setNotifs] = useState({ email:true, sms:false, push:true, newsletter:false, promo:false });
 
-  const handleProfileSave = (e) => {
+  function saveProfile(e) {
     e.preventDefault();
-    if (!profile.name.trim() || !profile.email.trim()) {
-      setProfileMsg({ ok: false, text: "Nama dan email wajib diisi." });
-      return;
-    }
-    setProfileMsg({ ok: true, text: "Profil berhasil diperbarui." });
+    if (!profile.name.trim() || !profile.email.trim()) { setProfileMsg({ ok:false, text:"Nama & email wajib diisi." }); return; }
+    setProfileMsg({ ok:true, text:"Profil disimpan." });
     setTimeout(() => setProfileMsg(null), 3000);
-  };
+  }
 
-  const handlePwChange = (e) => {
+  function changePassword(e) {
     e.preventDefault();
-    if (!pwForm.current) { setPwMsg({ ok: false, text: "Masukkan password saat ini." }); return; }
-    const err = validatePassword(pwForm.next, profile.name);
-    if (err) { setPwMsg({ ok: false, text: err }); return; }
-    if (pwForm.next !== pwForm.confirm) { setPwMsg({ ok: false, text: "Konfirmasi password tidak cocok." }); return; }
-    setPwMsg({ ok: true, text: "Password berhasil diperbarui." });
-    setPwForm({ current: "", next: "", confirm: "" });
+    if (!pw.current) { setPwMsg({ ok:false, text:"Masukkan password saat ini." }); return; }
+    const err = validatePassword(pw.next, profile.name);
+    if (err) { setPwMsg({ ok:false, text:err }); return; }
+    if (pw.next !== pw.confirm) { setPwMsg({ ok:false, text:"Konfirmasi tidak cocok." }); return; }
+    setPwMsg({ ok:true, text:"Password diperbarui." });
+    setPw({ current:"", next:"", confirm:"" });
     setTimeout(() => setPwMsg(null), 3000);
-  };
+  }
 
-  const handleTfaToggle = () => {
-    if (!twoFA && tfaStep === 0) {
-      setTfaStep(1);
-      setTfaMsg({ ok: true, text: `Kode OTP dikirim ke ${profile.email}` });
-    } else if (twoFA) {
-      setTwoFA(false);
-      setTfaStep(0);
-      setTfaMsg({ ok: true, text: "2FA dinonaktifkan." });
-      setTimeout(() => setTfaMsg(null), 3000);
-    }
-  };
+  function toggleTfa() {
+    if (!twoFA && tfaStep === 0) { setTfaStep(1); setTfaMsg({ ok:true, text:`OTP dikirim ke ${profile.email}` }); return; }
+    if (twoFA) { setTwoFA(false); setTfaStep(0); setTfaMsg({ ok:true, text:"2FA dinonaktifkan." }); setTimeout(()=>setTfaMsg(null),3000); }
+  }
 
-  const handleOtpVerify = (e) => {
+  function verifyOtp(e) {
     e.preventDefault();
-    if (otp.length !== 6) { setTfaMsg({ ok: false, text: "Masukkan 6 digit OTP." }); return; }
-    setTwoFA(true);
-    setTfaStep(2);
-    setOtp("");
-    setTfaMsg({ ok: true, text: "2FA berhasil diaktifkan." });
-    setTimeout(() => setTfaMsg(null), 3000);
-  };
+    if (otp.length !== 6) { setTfaMsg({ ok:false, text:"Masukkan 6 digit OTP." }); return; }
+    setTwoFA(true); setTfaStep(2); setOtp("");
+    setTfaMsg({ ok:true, text:"2FA aktif." }); setTimeout(()=>setTfaMsg(null),3000);
+  }
 
-  const Toggle = ({ value, onChange, label }) => (
-    <div className="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
-      <p className="text-sm text-neutral-300">{label}</p>
-      <button
-        onClick={() => onChange(!value)}
-        className={`w-10 h-5 rounded-full transition-colors relative flex-shrink-0 ${value ? "bg-primary" : "bg-neutral-700"}`}
-      >
-        <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all ${value ? "left-5.5" : "left-0.5"}`} style={{ left: value ? "1.375rem" : "0.125rem" }} />
-      </button>
-    </div>
+  const SectionTitle = ({ children }) => (
+    <p className="text-[11px] uppercase tracking-widest text-neutral-500 mb-4">{children}</p>
   );
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
       {/* Profile */}
-      <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5">
-        <p className="text-xs font-bold uppercase tracking-widest text-neutral-400 mb-4">Profil</p>
-        <form onSubmit={handleProfileSave} className="space-y-3">
-          {[
-            { label: "Nama Lengkap", key: "name", type: "text" },
-            { label: "Email", key: "email", type: "email" },
-            { label: "No. Telepon", key: "phone", type: "tel" },
-          ].map(({ label, key, type }) => (
-            <div key={key}>
-              <label className="block text-xs text-neutral-400 mb-1">{label}</label>
-              <input
-                type={type}
-                value={profile[key]}
-                onChange={(e) => setProfile((p) => ({ ...p, [key]: e.target.value }))}
-                className="w-full bg-white/10 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-          ))}
-          {profileMsg && (
-            <p className={`text-xs ${profileMsg.ok ? "text-emerald-400" : "text-red-400"}`}>{profileMsg.text}</p>
-          )}
-          <button type="submit" className="w-full bg-primary text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-primary-dark transition-colors">
-            Simpan Perubahan
+      <div className={`${CARD} p-5`}>
+        <SectionTitle>Profil</SectionTitle>
+        <form onSubmit={saveProfile} className="space-y-3">
+          <Field label="Nama" type="text"  value={profile.name}  onChange={e => setProfile(p=>({...p,name:e.target.value}))} />
+          <Field label="Email" type="email" value={profile.email} onChange={e => setProfile(p=>({...p,email:e.target.value}))} />
+          <Field label="Telepon" type="tel" value={profile.phone} onChange={e => setProfile(p=>({...p,phone:e.target.value}))} />
+          <Msg {...(profileMsg ?? { ok:true, text:"" })} />
+          <button type="submit" className="w-full bg-white text-black text-xs font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors">
+            Simpan
           </button>
         </form>
       </div>
 
       {/* Password */}
-      <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5">
-        <p className="text-xs font-bold uppercase tracking-widest text-neutral-400 mb-4">Ubah Password</p>
-        <form onSubmit={handlePwChange} className="space-y-3">
-          {[
-            { label: "Password Saat Ini", key: "current" },
-            { label: "Password Baru", key: "next" },
-            { label: "Konfirmasi Password Baru", key: "confirm" },
-          ].map(({ label, key }) => (
-            <div key={key}>
-              <label className="block text-xs text-neutral-400 mb-1">{label}</label>
-              <input
-                type={showPw ? "text" : "password"}
-                value={pwForm[key]}
-                onChange={(e) => setPwForm((f) => ({ ...f, [key]: e.target.value }))}
-                className="w-full bg-white/10 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-          ))}
-          <label className="flex items-center gap-2 cursor-pointer text-xs text-neutral-400">
-            <input type="checkbox" checked={showPw} onChange={(e) => setShowPw(e.target.checked)} className="accent-primary" />
-            Tampilkan password
+      <div className={`${CARD} p-5`}>
+        <SectionTitle>Ubah Password</SectionTitle>
+        <form onSubmit={changePassword} className="space-y-3">
+          <Field label="Password Saat Ini"   type={showPw?"text":"password"} value={pw.current}  onChange={e => setPw(p=>({...p,current:e.target.value}))} />
+          <Field label="Password Baru"        type={showPw?"text":"password"} value={pw.next}     onChange={e => setPw(p=>({...p,next:e.target.value}))} />
+          <Field label="Konfirmasi Password" type={showPw?"text":"password"} value={pw.confirm}  onChange={e => setPw(p=>({...p,confirm:e.target.value}))} />
+          <label className="flex items-center gap-2 cursor-pointer text-[11px] text-neutral-500">
+            <input type="checkbox" checked={showPw} onChange={e=>setShowPw(e.target.checked)} className="accent-primary" />
+            Tampilkan
           </label>
-          {pwMsg && (
-            <p className={`text-xs ${pwMsg.ok ? "text-emerald-400" : "text-red-400"}`}>{pwMsg.text}</p>
-          )}
-          <button type="submit" className="w-full bg-primary text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-primary-dark transition-colors">
-            Ubah Password
+          <Msg {...(pwMsg ?? { ok:true, text:"" })} />
+          <button type="submit" className="w-full bg-white text-black text-xs font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors">
+            Ubah
           </button>
         </form>
       </div>
 
       {/* 2FA */}
-      <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5">
-        <p className="text-xs font-bold uppercase tracking-widest text-neutral-400 mb-4">Autentikasi Dua Faktor (2FA)</p>
+      <div className={`${CARD} p-5`}>
+        <SectionTitle>Autentikasi Dua Faktor</SectionTitle>
         <div className="flex items-center justify-between mb-4">
-          <div>
-            <p className="text-sm text-white font-semibold">Status 2FA</p>
-            <p className="text-xs text-neutral-500">Lindungi akun dengan verifikasi OTP via email.</p>
-          </div>
-          <div className={`flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full ${twoFA ? "bg-emerald-500/20 text-emerald-400" : "bg-neutral-700/50 text-neutral-400"}`}>
-            {twoFA ? "Aktif" : "Nonaktif"}
-          </div>
+          <p className="text-sm text-neutral-300">Status</p>
+          <Badge status={twoFA ? "active" : "cancelled"} />
         </div>
-
         {tfaStep === 1 && (
-          <form onSubmit={handleOtpVerify} className="space-y-3 mb-3">
-            <input
-              type="text"
-              maxLength={6}
-              value={otp}
-              onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+          <form onSubmit={verifyOtp} className="space-y-3 mb-3">
+            <input type="text" maxLength={6} value={otp}
+              onChange={e => setOtp(e.target.value.replace(/\D/g,""))}
               placeholder="6-digit OTP"
-              className="w-full bg-white/10 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder-neutral-600 tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-            <button type="submit" className="w-full bg-primary text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-primary-dark transition-colors">
-              Verifikasi OTP
+              className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white text-center tracking-widest focus:outline-none focus:border-neutral-500 transition-colors" />
+            <button type="submit" className="w-full bg-white text-black text-xs font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors">
+              Verifikasi
             </button>
           </form>
         )}
-
-        {tfaMsg && (
-          <p className={`text-xs mb-3 ${tfaMsg.ok ? "text-emerald-400" : "text-red-400"}`}>{tfaMsg.text}</p>
-        )}
-
+        <Msg {...(tfaMsg ?? { ok:true, text:"" })} />
         {tfaStep !== 1 && (
-          <button
-            onClick={handleTfaToggle}
-            className={`w-full text-sm font-semibold py-2.5 rounded-xl transition-colors ${twoFA ? "bg-red-500/20 text-red-400 hover:bg-red-500/30" : "bg-primary text-white hover:bg-primary-dark"}`}
-          >
+          <button onClick={toggleTfa}
+            className="w-full mt-3 border border-neutral-700 hover:border-neutral-500 text-xs text-neutral-300 hover:text-white py-2 rounded-lg transition-colors">
             {twoFA ? "Nonaktifkan 2FA" : "Aktifkan 2FA"}
           </button>
         )}
       </div>
 
-      {/* Notifications */}
-      <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-5">
-        <p className="text-xs font-bold uppercase tracking-widest text-neutral-400 mb-4">Notifikasi</p>
-        <Toggle value={notifs.email} onChange={(v) => setNotifs((n) => ({ ...n, email: v }))} label="Email" />
-        <Toggle value={notifs.sms} onChange={(v) => setNotifs((n) => ({ ...n, sms: v }))} label="SMS" />
-        <Toggle value={notifs.push} onChange={(v) => setNotifs((n) => ({ ...n, push: v }))} label="Push Notification" />
-        <Toggle value={notifs.newsletter} onChange={(v) => setNotifs((n) => ({ ...n, newsletter: v }))} label="Newsletter" />
-        <Toggle value={notifs.promo} onChange={(v) => setNotifs((n) => ({ ...n, promo: v }))} label="Promo & Penawaran" />
+      {/* Notifikasi */}
+      <div className={`${CARD} p-5`}>
+        <SectionTitle>Notifikasi</SectionTitle>
+        <Toggle label="Email"        value={notifs.email}      onChange={v => setNotifs(n=>({...n,email:v}))} />
+        <Toggle label="SMS"          value={notifs.sms}        onChange={v => setNotifs(n=>({...n,sms:v}))} />
+        <Toggle label="Push"         value={notifs.push}       onChange={v => setNotifs(n=>({...n,push:v}))} />
+        <Toggle label="Newsletter"   value={notifs.newsletter} onChange={v => setNotifs(n=>({...n,newsletter:v}))} />
+        <Toggle label="Promo"        value={notifs.promo}      onChange={v => setNotifs(n=>({...n,promo:v}))} />
       </div>
     </div>
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
-const MAIN_TABS = [
-  { id: "overview", label: "Overview", icon: "📊" },
-  { id: "tickets",  label: "Tiket Saya", icon: "🎟️" },
-  { id: "settings", label: "Pengaturan", icon: "⚙️" },
+// ── Page ──────────────────────────────────────────────────────────────────────
+const TABS = [
+  { id:"overview", label:"Overview" },
+  { id:"tickets",  label:"Tiket Saya" },
+  { id:"settings", label:"Pengaturan" },
 ];
 
 export default function UserDashboard() {
@@ -636,57 +458,43 @@ export default function UserDashboard() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    if (!requireAuth(router, ["user", "admin", "organizer"])) return;
+    if (!requireAuth(router, ["user","admin","organizer"])) return;
     setUser(getUser());
     fetchMyOrders()
-      .then((data) => {
-        const list = Array.isArray(data) ? data : data?.orders ?? data?.data ?? [];
-        if (list.length) setTickets(list);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      .then(d => { const l = Array.isArray(d)?d:d?.orders??d?.data??[]; if(l.length) setTickets(l); })
+      .catch(()=>{})
+      .finally(()=>setLoading(false));
   }, [router]);
 
   return (
     <>
       <Head><title>Dashboard – TiketKu</title></Head>
       <DashboardLayout title="Dashboard">
-        {/* Dark glass wrapper */}
-        <div className="min-h-full" style={{ background: "linear-gradient(135deg,#0f172a 0%,#1e293b 100%)", borderRadius: "1rem", padding: "1.5rem" }}>
-
-          {/* Tab nav */}
-          <div className="flex gap-1 mb-6 bg-white/5 rounded-xl p-1 border border-white/10 w-fit">
-            {MAIN_TABS.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTab(t.id)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-                  tab === t.id
-                    ? "bg-primary text-white shadow"
-                    : "text-neutral-400 hover:text-white"
-                }`}
-              >
-                <span>{t.icon}</span>
-                <span className="hidden sm:inline">{t.label}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Content */}
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="bg-white/5 rounded-2xl p-5 animate-pulse h-28" />
-              ))}
-            </div>
-          ) : (
-            <>
-              {tab === "overview" && <Overview tickets={tickets} user={user} />}
-              {tab === "tickets"  && <MyTickets tickets={tickets} />}
-              {tab === "settings" && <Settings user={user} />}
-            </>
-          )}
+        {/* tab bar */}
+        <div className="flex gap-1 mb-6 border-b border-neutral-800 pb-px">
+          {TABS.map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              className={`px-4 py-2 text-sm transition-colors relative ${
+                tab === t.id ? "text-white font-semibold" : "text-neutral-500 hover:text-neutral-300"
+              }`}>
+              {t.label}
+              {tab === t.id && <span className="absolute bottom-0 left-0 w-full h-px bg-primary" />}
+            </button>
+          ))}
         </div>
+
+        {/* content */}
+        {loading ? (
+          <div className="grid grid-cols-3 gap-3">
+            {[...Array(3)].map((_,i) => <div key={i} className="bg-neutral-900 rounded-xl h-20 animate-pulse" />)}
+          </div>
+        ) : (
+          <>
+            {tab === "overview"  && <Overview  tickets={tickets} user={user} />}
+            {tab === "tickets"   && <MyTickets tickets={tickets} />}
+            {tab === "settings"  && <Settings  user={user} />}
+          </>
+        )}
       </DashboardLayout>
     </>
   );
