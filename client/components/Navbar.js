@@ -15,10 +15,8 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { href: "/events", label: "Browse" },
-    { href: "/events?category=music", label: "Music" },
-    { href: "/events?category=sports", label: "Sports" },
-    { href: "/events?category=festival", label: "Festival" },
+    { href: "/events", label: "Jelajah" },
+    { href: "/about", label: "Tentang Kami" },
   ];
 
   return (
@@ -57,7 +55,7 @@ export default function Navbar() {
 
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-5">
-            {navLinks.slice(0, 3).map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

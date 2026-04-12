@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
+import { useState } from "react";
 
 const TEAM = [
   { name: "Budi Santoso", role: "Co-founder & CEO", avatar: "BS", bio: "Former product lead at Gojek with 10 years building consumer apps at scale." },
@@ -118,23 +119,156 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Contact form — Tentang Kami */}
+      <section className="bg-neutral-50 py-16 border-t border-neutral-100">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-10">
+            <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Hubungi Kami</p>
+            <h2 className="text-2xl font-extrabold text-neutral-900">Ada pertanyaan? Kami siap membantu.</h2>
+            <p className="text-neutral-500 text-sm mt-2">Tim kami biasanya membalas dalam satu hari kerja.</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Contact channels */}
+            <div className="space-y-4">
+              {[
+                { label: "Email", value: "support@tiketku.id",           sub: "Pertanyaan umum & dukungan tiket" },
+                { label: "Telepon", value: "+62 21 5000-1234",           sub: "Sen – Jum, 09.00 – 18.00 WIB"    },
+                { label: "Live Chat", value: "Tersedia di aplikasi",     sub: "Respons tercepat untuk masalah mendesak" },
+                { label: "Kantor", value: "Jl. Sudirman No. 15, Jakarta", sub: "Hanya dengan perjanjian"         },
+              ].map((ch) => (
+                <div key={ch.label} className="bg-white rounded-2xl p-4 border border-neutral-100">
+                  <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-0.5">{ch.label}</p>
+                  <p className="text-sm font-semibold text-neutral-800">{ch.value}</p>
+                  <p className="text-xs text-neutral-400 mt-0.5">{ch.sub}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Form */}
+            <div className="lg:col-span-2">
+              <ContactForm />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="bg-primary py-14">
         <div className="max-w-xl mx-auto px-4 text-center">
-          <h2 className="text-2xl font-extrabold text-white mb-3">Join us on the mission</h2>
+          <h2 className="text-2xl font-extrabold text-white mb-3">Bergabunglah bersama kami</h2>
           <p className="text-white text-opacity-80 mb-6 text-sm">
-            Whether you&rsquo;re a fan, an organizer, or someone who wants to work with us — there&rsquo;s a place for you.
+            Apakah kamu penggemar, organizer, atau ingin bekerja bersama kami — selalu ada tempat untukmu.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/careers" className="bg-white text-primary font-semibold px-6 py-3 rounded-full hover:bg-neutral-100 transition-colors text-sm">
-              View Open Roles
+              Lihat Lowongan
             </Link>
             <Link href="/contact" className="border border-white text-white font-semibold px-6 py-3 rounded-full hover:bg-white hover:text-primary transition-colors text-sm">
-              Get in Touch
+              Hubungi Kami
             </Link>
           </div>
         </div>
       </section>
     </>
+  );
+}
+
+function ContactForm() {
+  const [form, setForm]           = useState({ name: "", email: "", message: "" });
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError]         = useState("");
+
+  const handleChange = (e) => {
+    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+    setError("");
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!form.name || !form.email || !form.message) {
+      setError("Semua field wajib diisi.");
+      return;
+    }
+    setSubmitted(true);
+  };
+
+  if (submitted) {
+    return (
+      <div className="bg-white rounded-2xl border border-neutral-100 p-8 text-center h-full flex flex-col items-center justify-center">
+        <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h3 className="text-lg font-bold text-neutral-800 mb-1">Pesan terkirim!</h3>
+        <p className="text-sm text-neutral-500">
+          Terima kasih, <strong>{form.name}</strong>. Kami akan membalas ke <strong>{form.email}</strong> dalam 1 hari kerja.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-neutral-100 p-6 space-y-4">
+      <h3 className="text-base font-bold text-neutral-800">Kirim pesan</h3>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-xs font-semibold text-neutral-600 mb-1">
+            Nama Lengkap <span className="text-red-500">*</span>
+          </label>
+          <input
+            required
+            type="text"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Budi Santoso"
+            className="w-full border border-neutral-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-semibold text-neutral-600 mb-1">
+            Email <span className="text-red-500">*</span>
+          </label>
+          <input
+            required
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="budi@email.com"
+            className="w-full border border-neutral-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-xs font-semibold text-neutral-600 mb-1">
+          Pesan <span className="text-red-500">*</span>
+        </label>
+        <textarea
+          required
+          name="message"
+          value={form.message}
+          onChange={handleChange}
+          rows={5}
+          placeholder="Ceritakan pertanyaan atau kebutuhanmu…"
+          className="w-full border border-neutral-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+        />
+      </div>
+
+      {error && (
+        <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2">{error}</p>
+      )}
+
+      <button
+        type="submit"
+        className="w-full py-3 rounded-full bg-primary text-white font-semibold text-sm hover:bg-primary-dark transition-colors"
+      >
+        Kirim Pesan
+      </button>
+    </form>
   );
 }
