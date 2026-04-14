@@ -57,7 +57,7 @@ const WD_INIT = [
 const IDR = (n) =>
   new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(n);
 
-const CARD = "bg-neutral-900 border border-neutral-800 rounded-xl";
+const CARD = "bg-white border border-neutral-200 rounded-xl shadow-sm";
 
 const STATUS_MAP = {
   active:    { dot: "bg-emerald-400", label: "Aktif" },
@@ -74,7 +74,7 @@ const STATUS_MAP = {
 function Dot({ status }) {
   const s = STATUS_MAP[status] ?? STATUS_MAP.draft;
   return (
-    <span className="inline-flex items-center gap-1.5 text-[11px] text-neutral-400">
+    <span className="inline-flex items-center gap-1.5 text-[11px] text-neutral-500">
       <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
       {s.label}
     </span>
@@ -82,13 +82,13 @@ function Dot({ status }) {
 }
 
 function SecTitle({ children }) {
-  return <p className="text-[11px] uppercase tracking-widest text-neutral-500 mb-4">{children}</p>;
+  return <p className="text-[11px] uppercase tracking-widest text-neutral-400 mb-4">{children}</p>;
 }
 
 function Trend({ v }) {
   const pos = v >= 0;
   return (
-    <span className={`text-[11px] font-medium ${pos ? "text-emerald-400" : "text-red-400"}`}>
+    <span className={`text-[11px] font-medium ${pos ? "text-emerald-500" : "text-red-500"}`}>
       {pos ? "\u2191" : "\u2193"} {Math.abs(v)}% vs last month
     </span>
   );
@@ -116,7 +116,7 @@ function Overview() {
               <p className="text-[11px] uppercase tracking-wider text-neutral-500">{k.label}</p>
               <span className="text-lg">{k.icon}</span>
             </div>
-            <p className="text-xl font-bold text-white mb-1">{k.value}</p>
+            <p className="text-xl font-bold text-neutral-900 mb-1">{k.value}</p>
             <Trend v={k.growth} />
           </div>
         ))}
@@ -125,24 +125,24 @@ function Overview() {
       {/* Actionable alerts */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className={`${CARD} p-4 flex items-center gap-4`}>
-          <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center text-xl flex-shrink-0">
-            \ud83d\udcc4
+          <div className="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center text-xl flex-shrink-0">
+            📄
           </div>
           <div>
             <p className="text-[11px] uppercase tracking-wider text-neutral-500">Pending Verifikasi Creator</p>
-            <p className="text-2xl font-bold text-white mt-0.5">{KPI.pendingVerif}</p>
+            <p className="text-2xl font-bold text-neutral-900 mt-0.5">{KPI.pendingVerif}</p>
           </div>
-          <span className="ml-auto text-[11px] text-yellow-400 font-semibold">Perlu tindakan</span>
+          <span className="ml-auto text-[11px] text-yellow-600 font-semibold">Perlu tindakan</span>
         </div>
         <div className={`${CARD} p-4 flex items-center gap-4`}>
-          <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center text-xl flex-shrink-0">
-            \ud83d\udcb8
+          <div className="w-10 h-10 rounded-xl bg-yellow-50 flex items-center justify-center text-xl flex-shrink-0">
+            💸
           </div>
           <div>
             <p className="text-[11px] uppercase tracking-wider text-neutral-500">Pending Pencairan</p>
-            <p className="text-2xl font-bold text-white mt-0.5">{KPI.pendingWithdraw}</p>
+            <p className="text-2xl font-bold text-neutral-900 mt-0.5">{KPI.pendingWithdraw}</p>
           </div>
-          <span className="ml-auto text-[11px] text-yellow-400 font-semibold">Perlu tindakan</span>
+          <span className="ml-auto text-[11px] text-yellow-600 font-semibold">Perlu tindakan</span>
         </div>
       </div>
 
@@ -152,7 +152,7 @@ function Overview() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-[11px] uppercase tracking-wider text-neutral-600 border-b border-neutral-800">
+              <tr className="text-[11px] uppercase tracking-wider text-neutral-500 border-b border-neutral-200">
                 <th className="px-5 py-3 text-left">ID</th>
                 <th className="px-5 py-3 text-left">User</th>
                 <th className="px-5 py-3 text-left">Event</th>
@@ -162,16 +162,16 @@ function Overview() {
                 <th className="px-5 py-3 text-left">Tanggal</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-800">
+            <tbody className="divide-y divide-neutral-100">
               {TXN_INIT.slice(0, 5).map((r) => (
-                <tr key={r.id} className="hover:bg-neutral-800/40 transition-colors">
-                  <td className="px-5 py-3 font-mono text-xs text-neutral-500">{r.id}</td>
-                  <td className="px-5 py-3 text-neutral-300 font-medium">{r.user}</td>
-                  <td className="px-5 py-3 text-neutral-400 max-w-[180px] truncate">{r.event}</td>
+                <tr key={r.id} className="hover:bg-neutral-50 transition-colors">
+                  <td className="px-5 py-3 font-mono text-xs text-neutral-400">{r.id}</td>
+                  <td className="px-5 py-3 text-neutral-800 font-medium">{r.user}</td>
+                  <td className="px-5 py-3 text-neutral-500 max-w-[180px] truncate">{r.event}</td>
                   <td className="px-5 py-3 text-neutral-500 text-[11px]">{r.method}</td>
-                  <td className="px-5 py-3 text-white font-medium">{IDR(r.amount)}</td>
+                  <td className="px-5 py-3 text-neutral-900 font-medium">{IDR(r.amount)}</td>
                   <td className="px-5 py-3"><Dot status={r.status} /></td>
-                  <td className="px-5 py-3 text-neutral-500 tabular-nums">{r.date}</td>
+                  <td className="px-5 py-3 text-neutral-400 tabular-nums">{r.date}</td>
                 </tr>
               ))}
             </tbody>
@@ -220,7 +220,7 @@ function Creators() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Cari creator..."
-            className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-1.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-500 w-48"
+            className="bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-1.5 text-sm text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-neutral-400 w-48"
           />
         </div>
       </div>
@@ -231,7 +231,7 @@ function Creators() {
           <div key={c.id} className={`${CARD} p-4`}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="text-sm font-semibold text-white">{c.name}</p>
+                <p className="text-sm font-semibold text-neutral-900">{c.name}</p>
                 <p className="text-[11px] text-neutral-500 mt-0.5">{c.email} · {c.id}</p>
                 <div className="flex gap-2 mt-2 flex-wrap">
                   {[
@@ -241,7 +241,7 @@ function Creators() {
                   ].map((d) => (
                     <span
                       key={d.label}
-                      className={`text-[10px] px-2 py-0.5 rounded-full border ${d.ok ? "border-emerald-800 text-emerald-400" : "border-red-900 text-red-400"}`}
+                      className={`text-[10px] px-2 py-0.5 rounded-full border ${d.ok ? "border-emerald-300 text-emerald-600" : "border-red-300 text-red-500"}`}
                     >
                       {d.ok ? "\u2713" : "\u2717"} {d.label}
                     </span>
@@ -253,7 +253,7 @@ function Creators() {
                 {c.status === "pending" && (
                   <button
                     onClick={() => { setModal(c); setReason(""); setMsg(null); }}
-                    className="text-[11px] border border-neutral-700 text-neutral-300 hover:text-white hover:border-neutral-500 px-3 py-1.5 rounded-lg transition-colors"
+                    className="text-[11px] border border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:border-neutral-400 px-3 py-1.5 rounded-lg transition-colors"
                   >
                     Review
                   </button>
@@ -261,7 +261,7 @@ function Creators() {
               </div>
             </div>
             {c.events > 0 && (
-              <p className="text-[11px] text-neutral-600 mt-2">
+              <p className="text-[11px] text-neutral-400 mt-2">
                 {c.events} event · {IDR(c.revenue)} total revenue
               </p>
             )}
@@ -272,28 +272,28 @@ function Creators() {
       {/* Review Modal */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
-          <div className="bg-neutral-900 border border-neutral-700 rounded-2xl p-6 w-full max-w-md space-y-4">
+          <div className="bg-white border border-neutral-200 rounded-2xl p-6 w-full max-w-md space-y-4">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-semibold text-white">{modal.name}</p>
+                <p className="text-sm font-semibold text-neutral-900">{modal.name}</p>
                 <p className="text-[11px] text-neutral-500">{modal.email}</p>
               </div>
-              <button onClick={() => setModal(null)} className="text-neutral-500 hover:text-white text-lg">
-                \u00d7
+              <button onClick={() => setModal(null)} className="text-neutral-400 hover:text-neutral-900 text-lg">
+                ×
               </button>
             </div>
 
             {/* KYC doc checklist */}
             <div className="space-y-2">
-              <p className="text-[11px] uppercase tracking-wider text-neutral-500 mb-1">Dokumen KYC</p>
+              <p className="text-[11px] uppercase tracking-wider text-neutral-400 mb-1">Dokumen KYC</p>
               {[
                 { label: "KTP / ID Nasional", ok: modal.ktp },
                 { label: "Foto Formal",       ok: modal.photo },
                 { label: "Legalitas Perusahaan", ok: modal.legality },
               ].map((d) => (
-                <div key={d.label} className="flex items-center justify-between border border-neutral-800 rounded-lg px-4 py-2.5">
-                  <p className="text-sm text-neutral-300">{d.label}</p>
-                  <span className={`text-xs font-semibold ${d.ok ? "text-emerald-400" : "text-red-400"}`}>
+                <div key={d.label} className="flex items-center justify-between border border-neutral-100 rounded-lg px-4 py-2.5">
+                  <p className="text-sm text-neutral-700">{d.label}</p>
+                  <span className={`text-xs font-semibold ${d.ok ? "text-emerald-600" : "text-red-500"}`}>
                     {d.ok ? "\u2713 Uploaded" : "\u2717 Missing"}
                   </span>
                 </div>
@@ -310,7 +310,7 @@ function Creators() {
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 placeholder="Dokumen tidak lengkap / tidak valid..."
-                className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-500 resize-none"
+                className="w-full bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-2 text-sm text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-neutral-400 resize-none"
               />
             </div>
             <Msg ok={msg?.ok} text={msg?.text} />
@@ -318,13 +318,13 @@ function Creators() {
             <div className="flex gap-3">
               <button
                 onClick={() => reject(modal.id)}
-                className="flex-1 border border-red-900 text-red-400 hover:border-red-700 hover:text-red-300 py-2 rounded-lg text-sm transition-colors"
+                className="flex-1 border border-red-300 text-red-500 hover:border-red-400 hover:text-red-600 py-2 rounded-lg text-sm transition-colors"
               >
                 Tolak
               </button>
               <button
                 onClick={() => approve(modal.id)}
-                className="flex-1 bg-white text-black text-sm font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors"
+                className="flex-1 bg-neutral-900 text-white text-sm font-semibold py-2 rounded-lg hover:bg-neutral-700 transition-colors"
               >
                 Setujui
               </button>
@@ -373,8 +373,8 @@ function Events() {
               onClick={() => setFilter(f)}
               className={`text-[11px] capitalize px-3 py-1 rounded-lg border transition-colors ${
                 filter === f
-                  ? "border-neutral-500 text-white bg-neutral-800"
-                  : "border-neutral-700 text-neutral-500 hover:text-neutral-300"
+                  ? "border-neutral-400 text-neutral-900 bg-neutral-100"
+                  : "border-neutral-200 text-neutral-500 hover:text-neutral-700"
               }`}
             >
               {f}
@@ -389,18 +389,18 @@ function Events() {
           <div key={ev.id} className={`${CARD} p-4`}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-white truncate">{ev.name}</p>
+                <p className="text-sm font-semibold text-neutral-900 truncate">{ev.name}</p>
                 <p className="text-[11px] text-neutral-500 mt-0.5">
                   {ev.creator} · {ev.date} · {ev.genre}
                 </p>
-                <p className="text-[11px] text-neutral-600 mt-1">Tiket: {ev.tickets}</p>
+                <p className="text-[11px] text-neutral-400 mt-1">Tiket: {ev.tickets}</p>
               </div>
               <div className="flex items-center gap-3 flex-shrink-0">
                 <Dot status={ev.status} />
                 {ev.status === "pending" && (
                   <button
                     onClick={() => { setModal(ev); setReason(""); setMsg(null); }}
-                    className="text-[11px] border border-neutral-700 text-neutral-300 hover:text-white hover:border-neutral-500 px-3 py-1.5 rounded-lg transition-colors"
+                    className="text-[11px] border border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:border-neutral-400 px-3 py-1.5 rounded-lg transition-colors"
                   >
                     Review
                   </button>
@@ -410,20 +410,20 @@ function Events() {
           </div>
         ))}
         {displayed.length === 0 && (
-          <p className="text-center text-neutral-600 text-sm py-8">Tidak ada event dengan filter ini.</p>
+          <p className="text-center text-neutral-400 text-sm py-8">Tidak ada event dengan filter ini.</p>
         )}
       </div>
 
       {/* Review Modal */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
-          <div className="bg-neutral-900 border border-neutral-700 rounded-2xl p-6 w-full max-w-md space-y-4">
+          <div className="bg-white border border-neutral-200 rounded-2xl p-6 w-full max-w-md space-y-4">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-semibold text-white">{modal.name}</p>
+                <p className="text-sm font-semibold text-neutral-900">{modal.name}</p>
                 <p className="text-[11px] text-neutral-500">{modal.creator} · {modal.date}</p>
               </div>
-              <button onClick={() => setModal(null)} className="text-neutral-500 hover:text-white text-lg">\u00d7</button>
+              <button onClick={() => setModal(null)} className="text-neutral-400 hover:text-neutral-900 text-lg">×</button>
             </div>
             <div className="space-y-2 text-[12px]">
               {[
@@ -432,9 +432,9 @@ function Events() {
                 { k: "Tiket",      v: modal.tickets },
                 { k: "Creator",    v: modal.creator },
               ].map((r) => (
-                <div key={r.k} className="flex justify-between border-b border-neutral-800 pb-1">
+                <div key={r.k} className="flex justify-between border-b border-neutral-100 pb-1">
                   <span className="text-neutral-500">{r.k}</span>
-                  <span className="text-neutral-300">{r.v}</span>
+                  <span className="text-neutral-800">{r.v}</span>
                 </div>
               ))}
             </div>
@@ -447,13 +447,13 @@ function Events() {
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 placeholder="Deskripsi kurang lengkap / konten tidak sesuai..."
-                className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-500 resize-none"
+                className="w-full bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-2 text-sm text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-neutral-400 resize-none"
               />
             </div>
             <Msg ok={msg?.ok} text={msg?.text} />
             <div className="flex gap-3">
-              <button onClick={() => reject(modal.id)} className="flex-1 border border-red-900 text-red-400 hover:border-red-700 py-2 rounded-lg text-sm transition-colors">Tolak</button>
-              <button onClick={() => approve(modal.id)} className="flex-1 bg-white text-black text-sm font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors">Setujui</button>
+              <button onClick={() => reject(modal.id)} className="flex-1 border border-red-300 text-red-500 hover:border-red-400 py-2 rounded-lg text-sm transition-colors">Tolak</button>
+              <button onClick={() => approve(modal.id)} className="flex-1 bg-neutral-900 text-white text-sm font-semibold py-2 rounded-lg hover:bg-neutral-700 transition-colors">Setujui</button>
             </div>
           </div>
         </div>
@@ -494,8 +494,8 @@ function Users() {
             onClick={() => setActiveSection(s.key)}
             className={`text-[11px] px-4 py-1.5 rounded-lg border transition-colors ${
               activeSection === s.key
-                ? "border-neutral-500 text-white bg-neutral-800"
-                : "border-neutral-700 text-neutral-500 hover:text-neutral-300"
+                ? "border-neutral-400 text-neutral-900 bg-neutral-100"
+                : "border-neutral-200 text-neutral-500 hover:text-neutral-700"
             }`}
           >
             {s.label}
@@ -510,7 +510,7 @@ function Users() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari nama atau email..."
-              className="flex-1 bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-1.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-500"
+              className="flex-1 bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-1.5 text-sm text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-neutral-400"
             />
             <div className="flex gap-2">
               {["all", "user", "organizer"].map((r) => (
@@ -519,8 +519,8 @@ function Users() {
                   onClick={() => setRoleFilter(r)}
                   className={`text-[11px] capitalize px-3 py-1.5 rounded-lg border transition-colors ${
                     roleFilter === r
-                      ? "border-neutral-500 text-white bg-neutral-800"
-                      : "border-neutral-700 text-neutral-500"
+                      ? "border-neutral-400 text-neutral-900 bg-neutral-100"
+                      : "border-neutral-200 text-neutral-500"
                   }`}
                 >
                   {r}
@@ -531,7 +531,7 @@ function Users() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-[11px] uppercase tracking-wider text-neutral-600 border-b border-neutral-800">
+                <tr className="text-[11px] uppercase tracking-wider text-neutral-500 border-b border-neutral-200">
                   <th className="px-5 py-3 text-left">ID</th>
                   <th className="px-5 py-3 text-left">Nama</th>
                   <th className="px-5 py-3 text-left">Role</th>
@@ -540,27 +540,27 @@ function Users() {
                   <th className="px-5 py-3 text-left">Bergabung</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-800">
+              <tbody className="divide-y divide-neutral-100">
                 {filteredUsers.map((u) => (
-                  <tr key={u.id} className="hover:bg-neutral-800/40 transition-colors">
-                    <td className="px-5 py-3 font-mono text-xs text-neutral-500">{u.id}</td>
+                  <tr key={u.id} className="hover:bg-neutral-50 transition-colors">
+                    <td className="px-5 py-3 font-mono text-xs text-neutral-400">{u.id}</td>
                     <td className="px-5 py-3">
-                      <p className="text-sm font-medium text-white">{u.name}</p>
+                      <p className="text-sm font-medium text-neutral-900">{u.name}</p>
                       <p className="text-[11px] text-neutral-500">{u.email}</p>
                     </td>
-                    <td className="px-5 py-3 text-neutral-400 capitalize text-[12px]">{u.role}</td>
-                    <td className="px-5 py-3 text-white">{u.spend ? IDR(u.spend) : "\u2014"}</td>
+                    <td className="px-5 py-3 text-neutral-500 capitalize text-[12px]">{u.role}</td>
+                    <td className="px-5 py-3 text-neutral-900">{u.spend ? IDR(u.spend) : "\u2014"}</td>
                     <td className="px-5 py-3"><Dot status={u.status} /></td>
-                    <td className="px-5 py-3 text-neutral-500 tabular-nums">{u.joined}</td>
+                    <td className="px-5 py-3 text-neutral-400 tabular-nums">{u.joined}</td>
                   </tr>
                 ))}
                 {filteredUsers.length === 0 && (
-                  <tr><td colSpan={6} className="px-5 py-8 text-center text-neutral-600 text-sm">Tidak ada pengguna ditemukan.</td></tr>
+                  <tr><td colSpan={6} className="px-5 py-8 text-center text-neutral-400 text-sm">Tidak ada pengguna ditemukan.</td></tr>
                 )}
               </tbody>
             </table>
           </div>
-          <div className="px-5 py-3 border-t border-neutral-800 text-[11px] text-neutral-600">
+          <div className="px-5 py-3 border-t border-neutral-100 text-[11px] text-neutral-400">
             Menampilkan {filteredUsers.length} dari {USERS_INIT.length} pengguna
           </div>
         </div>
@@ -573,13 +573,13 @@ function Users() {
               value={txnSearch}
               onChange={(e) => setTxnSearch(e.target.value)}
               placeholder="Cari user, event, ID, atau ref..."
-              className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-1.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-500"
+              className="w-full bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-1.5 text-sm text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-neutral-400"
             />
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-[11px] uppercase tracking-wider text-neutral-600 border-b border-neutral-800">
+                <tr className="text-[11px] uppercase tracking-wider text-neutral-500 border-b border-neutral-200">
                   <th className="px-5 py-3 text-left">ID</th>
                   <th className="px-5 py-3 text-left">User</th>
                   <th className="px-5 py-3 text-left">Event</th>
@@ -589,16 +589,16 @@ function Users() {
                   <th className="px-5 py-3 text-left">Ref</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-800">
+              <tbody className="divide-y divide-neutral-100">
                 {filteredTxn.map((t) => (
-                  <tr key={t.id} className="hover:bg-neutral-800/40 transition-colors">
-                    <td className="px-5 py-3 font-mono text-xs text-neutral-500">{t.id}</td>
-                    <td className="px-5 py-3 text-neutral-300">{t.user}</td>
-                    <td className="px-5 py-3 text-neutral-400 max-w-[150px] truncate">{t.event}</td>
+                  <tr key={t.id} className="hover:bg-neutral-50 transition-colors">
+                    <td className="px-5 py-3 font-mono text-xs text-neutral-400">{t.id}</td>
+                    <td className="px-5 py-3 text-neutral-800">{t.user}</td>
+                    <td className="px-5 py-3 text-neutral-500 max-w-[150px] truncate">{t.event}</td>
                     <td className="px-5 py-3 text-[11px] text-neutral-500">{t.method}</td>
-                    <td className="px-5 py-3 text-white font-medium">{IDR(t.amount)}</td>
+                    <td className="px-5 py-3 text-neutral-900 font-medium">{IDR(t.amount)}</td>
                     <td className="px-5 py-3"><Dot status={t.status} /></td>
-                    <td className="px-5 py-3 font-mono text-[10px] text-neutral-600 truncate max-w-[130px]">{t.ref}</td>
+                    <td className="px-5 py-3 font-mono text-[10px] text-neutral-400 truncate max-w-[130px]">{t.ref}</td>
                   </tr>
                 ))}
               </tbody>
@@ -654,8 +654,8 @@ function Withdrawals() {
               onClick={() => setFilter(f)}
               className={`text-[11px] capitalize px-3 py-1 rounded-lg border transition-colors ${
                 filter === f
-                  ? "border-neutral-500 text-white bg-neutral-800"
-                  : "border-neutral-700 text-neutral-500 hover:text-neutral-300"
+                  ? "border-neutral-400 text-neutral-900 bg-neutral-100"
+                  : "border-neutral-200 text-neutral-500 hover:text-neutral-700"
               }`}
             >
               {f}
@@ -672,24 +672,24 @@ function Withdrawals() {
             <div key={w.id} className={`${CARD} p-4`}>
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white">{w.creator}</p>
+                  <p className="text-sm font-semibold text-neutral-900">{w.creator}</p>
                   <p className="text-[11px] text-neutral-500 mt-0.5">
                     {w.bank} · {w.account} · {w.holder}
                   </p>
                   <div className="flex gap-4 mt-2 text-[12px]">
-                    <span className="text-neutral-400">Bruto: <span className="text-white">{IDR(w.amount)}</span></span>
-                    <span className="text-neutral-500">Fee 5%: {IDR(w.amount * PLAT_FEE)}</span>
-                    <span className="text-neutral-500">PPh 2%: {IDR(w.amount * TAX)}</span>
-                    <span className="text-neutral-300 font-semibold">Net: {IDR(net)}</span>
+                    <span className="text-neutral-500">Bruto: <span className="text-neutral-900">{IDR(w.amount)}</span></span>
+                    <span className="text-neutral-400">Fee 5%: {IDR(w.amount * PLAT_FEE)}</span>
+                    <span className="text-neutral-400">PPh 2%: {IDR(w.amount * TAX)}</span>
+                    <span className="text-neutral-700 font-semibold">Net: {IDR(net)}</span>
                   </div>
-                  <p className="text-[11px] text-neutral-600 mt-1">{w.date} · {w.id}</p>
+                  <p className="text-[11px] text-neutral-400 mt-1">{w.date} · {w.id}</p>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0">
                   <Dot status={w.status} />
                   {w.status === "pending" && (
                     <button
                       onClick={() => { setModal(w); setReason(""); setMsg(null); }}
-                      className="text-[11px] border border-neutral-700 text-neutral-300 hover:text-white hover:border-neutral-500 px-3 py-1.5 rounded-lg transition-colors"
+                      className="text-[11px] border border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:border-neutral-400 px-3 py-1.5 rounded-lg transition-colors"
                     >
                       Proses
                     </button>
@@ -700,39 +700,39 @@ function Withdrawals() {
           );
         })}
         {displayed.length === 0 && (
-          <p className="text-center text-neutral-600 text-sm py-8">Tidak ada pencairan.</p>
+          <p className="text-center text-neutral-400 text-sm py-8">Tidak ada pencairan.</p>
         )}
       </div>
 
       {/* Process Modal */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
-          <div className="bg-neutral-900 border border-neutral-700 rounded-2xl p-6 w-full max-w-md space-y-4">
+          <div className="bg-white border border-neutral-200 rounded-2xl p-6 w-full max-w-md space-y-4">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-semibold text-white">{modal.creator}</p>
+                <p className="text-sm font-semibold text-neutral-900">{modal.creator}</p>
                 <p className="text-[11px] text-neutral-500">{modal.id}</p>
               </div>
-              <button onClick={() => setModal(null)} className="text-neutral-500 hover:text-white text-lg">\u00d7</button>
+              <button onClick={() => setModal(null)} className="text-neutral-400 hover:text-neutral-900 text-lg">×</button>
             </div>
             {/* Fee breakdown */}
-            <div className="bg-neutral-800/60 rounded-lg p-4 text-sm space-y-1.5">
-              <div className="flex justify-between text-neutral-400"><span>Jumlah Bruto</span><span>{IDR(modal.amount)}</span></div>
-              <div className="flex justify-between text-neutral-500"><span>Platform Fee (5%)</span><span>\u2013 {IDR(modal.amount * PLAT_FEE)}</span></div>
-              <div className="flex justify-between text-neutral-500"><span>PPh 2%</span><span>\u2013 {IDR(modal.amount * TAX)}</span></div>
-              <div className="flex justify-between text-white font-semibold border-t border-neutral-700 pt-2"><span>Yang Ditransfer</span><span>{IDR(calcNet(modal.amount))}</span></div>
+            <div className="bg-neutral-50 rounded-lg p-4 text-sm space-y-1.5">
+              <div className="flex justify-between text-neutral-500"><span>Jumlah Bruto</span><span>{IDR(modal.amount)}</span></div>
+              <div className="flex justify-between text-neutral-400"><span>Platform Fee (5%)</span><span>– {IDR(modal.amount * PLAT_FEE)}</span></div>
+              <div className="flex justify-between text-neutral-400"><span>PPh 2%</span><span>– {IDR(modal.amount * TAX)}</span></div>
+              <div className="flex justify-between text-neutral-900 font-semibold border-t border-neutral-200 pt-2"><span>Yang Ditransfer</span><span>{IDR(calcNet(modal.amount))}</span></div>
             </div>
             {/* Bank details */}
             <div className="space-y-1.5 text-[12px]">
-              <p className="text-[11px] uppercase tracking-wider text-neutral-500 mb-1">Rekening Tujuan</p>
+              <p className="text-[11px] uppercase tracking-wider text-neutral-400 mb-1">Rekening Tujuan</p>
               {[
                 { k: "Bank",     v: modal.bank },
                 { k: "No. Rek",  v: modal.account },
                 { k: "Pemilik",  v: modal.holder },
               ].map((r) => (
-                <div key={r.k} className="flex justify-between border-b border-neutral-800 pb-1">
+                <div key={r.k} className="flex justify-between border-b border-neutral-100 pb-1">
                   <span className="text-neutral-500">{r.k}</span>
-                  <span className="text-neutral-300 font-mono">{r.v}</span>
+                  <span className="text-neutral-800 font-mono">{r.v}</span>
                 </div>
               ))}
             </div>
@@ -743,13 +743,13 @@ function Withdrawals() {
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 placeholder="Data rekening tidak valid..."
-                className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-500 resize-none"
+                className="w-full bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-2 text-sm text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-neutral-400 resize-none"
               />
             </div>
             <Msg ok={msg?.ok} text={msg?.text} />
             <div className="flex gap-3">
-              <button onClick={() => reject(modal.id)} className="flex-1 border border-red-900 text-red-400 hover:border-red-700 py-2 rounded-lg text-sm transition-colors">Tolak</button>
-              <button onClick={() => approve(modal.id)} className="flex-1 bg-white text-black text-sm font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors">Proses Transfer</button>
+              <button onClick={() => reject(modal.id)} className="flex-1 border border-red-300 text-red-500 hover:border-red-400 py-2 rounded-lg text-sm transition-colors">Tolak</button>
+              <button onClick={() => approve(modal.id)} className="flex-1 bg-neutral-900 text-white text-sm font-semibold py-2 rounded-lg hover:bg-neutral-700 transition-colors">Proses Transfer</button>
             </div>
           </div>
         </div>
@@ -760,11 +760,11 @@ function Withdrawals() {
 
 // ── Per-tab background containers ─────────────────────────────────────────────
 const TAB_WRAP = {
-  overview:    { style: { background: "radial-gradient(ellipse 90% 40% at 50% -5%, rgba(232,65,30,0.07) 0%, #0d0d0d 60%)" }, cls: "rounded-2xl p-5 md:p-6" },
-  creators:    { style: { background: "linear-gradient(145deg, #080c18 0%, #0b0b10 100%)" },                                  cls: "rounded-2xl p-5 md:p-6 border-l-2 border-secondary/30" },
-  events:      { style: { background: "linear-gradient(145deg, #0e0810 0%, #0d0d0d 100%)" },                                  cls: "rounded-2xl p-5 md:p-6 border-l-2 border-purple-900/40" },
-  users:       { style: { background: "linear-gradient(145deg, #07100a 0%, #0c0c0c 100%)" },                                  cls: "rounded-2xl p-5 md:p-6 border-t border-emerald-900/30" },
-  withdrawals: { style: { background: "linear-gradient(145deg, #0f0f0a 0%, #0d0d0d 100%)" },                                  cls: "rounded-2xl p-5 md:p-6 border-l-2 border-neutral-700/40" },
+  overview:    { style: {}, cls: "rounded-2xl p-5 md:p-6" },
+  creators:    { style: {}, cls: "rounded-2xl p-5 md:p-6" },
+  events:      { style: {}, cls: "rounded-2xl p-5 md:p-6" },
+  users:       { style: {}, cls: "rounded-2xl p-5 md:p-6" },
+  withdrawals: { style: {}, cls: "rounded-2xl p-5 md:p-6" },
 };
 
 const TAB_TITLES = {
@@ -795,10 +795,10 @@ export default function AdminDashboard() {
   return (
     <>
       <Head><title>{TAB_TITLES[tab] ?? "Admin Dashboard"} \u2013 TiketKu</title></Head>
-      <DashboardLayout title={TAB_TITLES[tab] ?? "Admin Dashboard"} variant="dark">
+      <DashboardLayout title={TAB_TITLES[tab] ?? "Admin Dashboard"}>
         {loading ? (
           <div className="grid grid-cols-4 gap-3">
-            {[...Array(4)].map((_, i) => <div key={i} className="bg-neutral-900 rounded-xl h-20 animate-pulse" />)}
+            {[...Array(4)].map((_, i) => <div key={i} className="bg-neutral-100 rounded-xl h-20 animate-pulse" />)}
           </div>
         ) : (
           <div className={wrap.cls} style={wrap.style}>

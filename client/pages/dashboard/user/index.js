@@ -60,7 +60,7 @@ function generateQR(id) {
 }
 
 // ── tiny shared primitives ────────────────────────────────────────────────────
-const CARD = "bg-neutral-900 border border-neutral-800 rounded-xl";
+const CARD = "bg-white border border-neutral-200 rounded-xl shadow-sm";
 
 const STATUS = {
   active:    { dot: "bg-emerald-400", label: "Aktif" },
@@ -71,7 +71,7 @@ const STATUS = {
 function Badge({ status }) {
   const s = STATUS[status] ?? STATUS.cancelled;
   return (
-    <span className="inline-flex items-center gap-1.5 text-[11px] text-neutral-400">
+    <span className="inline-flex items-center gap-1.5 text-[11px] text-neutral-500">
       <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
       {s.label}
     </span>
@@ -86,10 +86,10 @@ function QRModal({ ticket, onClose }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
       <div className={`relative ${CARD} p-6 w-full max-w-xs`}>
-        <button onClick={onClose} className="absolute top-4 right-4 text-neutral-500 hover:text-white text-sm">✕</button>
+        <button onClick={onClose} className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-900 text-sm">✕</button>
 
-        <p className="text-[10px] uppercase tracking-widest text-neutral-500 mb-1">{ticket.id}</p>
-        <p className="text-white font-semibold text-sm leading-snug mb-4">{ticket.event}</p>
+        <p className="text-[10px] uppercase tracking-widest text-neutral-400 mb-1">{ticket.id}</p>
+        <p className="text-neutral-900 font-semibold text-sm leading-snug mb-4">{ticket.event}</p>
 
         {/* QR */}
         <div className="flex justify-center mb-4">
@@ -102,7 +102,7 @@ function QRModal({ ticket, onClose }) {
           </div>
         </div>
 
-        <div className="text-xs text-neutral-400 space-y-1 mb-4">
+        <div className="text-xs text-neutral-500 space-y-1 mb-4">
           <p>{ticket.date} · {ticket.time} WIB</p>
           <p>{ticket.location}</p>
           <p>{ticket.type} · {fmtIDR(ticket.price)}</p>
@@ -110,7 +110,7 @@ function QRModal({ ticket, onClose }) {
 
         {gcUrl && (
           <a href={gcUrl} target="_blank" rel="noreferrer"
-             className="block w-full text-center text-xs text-neutral-300 hover:text-white border border-neutral-700 hover:border-neutral-500 rounded-lg py-2 transition-colors">
+             className="block w-full text-center text-xs text-neutral-600 hover:text-neutral-900 border border-neutral-200 hover:border-neutral-400 rounded-lg py-2 transition-colors">
             Tambah ke Google Calendar
           </a>
         )}
@@ -135,7 +135,7 @@ function Overview({ tickets, user }) {
           { label: "Event Mendatang",   value: active.length },
         ].map(s => (
           <div key={s.label} className={`${CARD} p-4`}>
-            <p className="text-xl font-bold text-white">{s.value}</p>
+            <p className="text-xl font-bold text-neutral-900">{s.value}</p>
             <p className="text-[11px] text-neutral-500 mt-0.5">{s.label}</p>
           </div>
         ))}
@@ -143,21 +143,21 @@ function Overview({ tickets, user }) {
 
       {/* recent activity */}
       <div className={CARD}>
-        <div className="px-4 pt-4 pb-3 border-b border-neutral-800">
-          <p className="text-[11px] uppercase tracking-widest text-neutral-500">Aktivitas Terbaru</p>
+        <div className="px-4 pt-4 pb-3 border-b border-neutral-200">
+          <p className="text-[11px] uppercase tracking-widest text-neutral-400">Aktivitas Terbaru</p>
         </div>
         {recent.length === 0 ? (
-          <p className="text-sm text-neutral-600 text-center py-8">Belum ada aktivitas.</p>
+          <p className="text-sm text-neutral-400 text-center py-8">Belum ada aktivitas.</p>
         ) : (
           <ul>
             {recent.map((t, i) => (
-              <li key={t.id} className={`flex items-center justify-between px-4 py-3 ${i < recent.length-1 ? "border-b border-neutral-800":""}`}>
+              <li key={t.id} className={`flex items-center justify-between px-4 py-3 ${i < recent.length-1 ? "border-b border-neutral-100":""}`}>
                 <div className="min-w-0 mr-4">
-                  <p className="text-sm text-white truncate">{t.event}</p>
+                  <p className="text-sm text-neutral-900 truncate">{t.event}</p>
                   <p className="text-[11px] text-neutral-500 mt-0.5">{t.orderedAt}</p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="text-sm text-white">{fmtIDR(t.price)}</p>
+                  <p className="text-sm text-neutral-900">{fmtIDR(t.price)}</p>
                   <Badge status={t.status} />
                 </div>
               </li>
@@ -168,8 +168,8 @@ function Overview({ tickets, user }) {
 
       {/* cta */}
       <div className={`${CARD} px-4 py-3 flex items-center justify-between`}>
-        <p className="text-sm text-neutral-300">
-          Hai, <span className="text-white font-medium">{user?.name?.split(" ")[0] ?? "Pengguna"}</span> — {active.length} tiket aktif.
+        <p className="text-sm text-neutral-600">
+          Hai, <span className="text-neutral-900 font-medium">{user?.name?.split(" ")[0] ?? "Pengguna"}</span> — {active.length} tiket aktif.
         </p>
         <Link href="/events" className="text-xs text-primary hover:underline flex-shrink-0">Jelajah →</Link>
       </div>
@@ -192,7 +192,7 @@ function MyTickets({ tickets }) {
         {FILTERS.map(f => (
           <button key={f} onClick={() => setFilter(f)}
             className={`px-3 py-1 rounded-md text-xs transition-colors ${
-              filter === f ? "bg-white text-black font-semibold" : "text-neutral-400 hover:text-white"
+              filter === f ? "bg-neutral-900 text-white font-semibold" : "text-neutral-500 hover:text-neutral-900"
             }`}>
             {f === "all" ? "Semua" : STATUS[f]?.label ?? f}
           </button>
@@ -210,7 +210,7 @@ function MyTickets({ tickets }) {
           <div className={`${CARD} hidden lg:block overflow-hidden`}>
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-neutral-800">
+                <tr className="border-b border-neutral-200">
                   {["Event","Tanggal","Lokasi","Tipe","Harga","Status",""].map(h => (
                     <th key={h} className="text-left text-[11px] uppercase tracking-wider text-neutral-500 px-4 py-3 font-normal">{h}</th>
                   ))}
@@ -220,21 +220,21 @@ function MyTickets({ tickets }) {
                 {shown.map((t,i) => {
                   const gcUrl = buildGCalUrl(t);
                   return (
-                    <tr key={t.id} className={`${i < shown.length-1 ? "border-b border-neutral-800":""} hover:bg-neutral-800/50 transition-colors`}>
+                    <tr key={t.id} className={`${i < shown.length-1 ? "border-b border-neutral-100":""} hover:bg-neutral-50 transition-colors`}>
                       <td className="px-4 py-3">
-                        <p className="text-white font-medium text-sm">{t.event}</p>
-                        <p className="text-[11px] text-neutral-500 font-mono">{t.id}</p>
+                        <p className="text-neutral-900 font-medium text-sm">{t.event}</p>
+                        <p className="text-[11px] text-neutral-400 font-mono">{t.id}</p>
                       </td>
-                      <td className="px-4 py-3 text-neutral-400 text-sm whitespace-nowrap">{t.date}</td>
-                      <td className="px-4 py-3 text-neutral-400 text-sm max-w-[160px] truncate">{t.location}</td>
-                      <td className="px-4 py-3 text-neutral-400 text-sm">{t.type}</td>
-                      <td className="px-4 py-3 text-white text-sm whitespace-nowrap">{fmtIDR(t.price)}</td>
+                      <td className="px-4 py-3 text-neutral-500 text-sm whitespace-nowrap">{t.date}</td>
+                      <td className="px-4 py-3 text-neutral-500 text-sm max-w-[160px] truncate">{t.location}</td>
+                      <td className="px-4 py-3 text-neutral-500 text-sm">{t.type}</td>
+                      <td className="px-4 py-3 text-neutral-900 text-sm whitespace-nowrap">{fmtIDR(t.price)}</td>
                       <td className="px-4 py-3"><Badge status={t.status} /></td>
                       <td className="px-4 py-3">
                         {t.status === "active" && (
                           <div className="flex gap-3">
                             <button onClick={() => setQr(t)} className="text-xs text-primary hover:underline">QR</button>
-                            {gcUrl && <a href={gcUrl} target="_blank" rel="noreferrer" className="text-xs text-neutral-400 hover:text-white">Cal</a>}
+                            {gcUrl && <a href={gcUrl} target="_blank" rel="noreferrer" className="text-xs text-neutral-400 hover:text-neutral-900">Cal</a>}
                           </div>
                         )}
                       </td>
@@ -252,16 +252,16 @@ function MyTickets({ tickets }) {
               return (
                 <div key={t.id} className={`${CARD} p-4`}>
                   <div className="flex justify-between gap-2 mb-1">
-                    <p className="text-sm text-white font-medium leading-snug">{t.event}</p>
+                    <p className="text-sm text-neutral-900 font-medium leading-snug">{t.event}</p>
                     <Badge status={t.status} />
                   </div>
                   <p className="text-[11px] text-neutral-500 mb-2">{t.date} · {t.location}</p>
                   <div className="flex items-center justify-between">
-                    <p className="text-sm text-white">{fmtIDR(t.price)}</p>
+                    <p className="text-sm text-neutral-900">{fmtIDR(t.price)}</p>
                     {t.status === "active" && (
                       <div className="flex gap-3">
                         <button onClick={() => setQr(t)} className="text-xs text-primary hover:underline">QR</button>
-                        {gcUrl && <a href={gcUrl} target="_blank" rel="noreferrer" className="text-xs text-neutral-400 hover:text-white">Kalender</a>}
+                        {gcUrl && <a href={gcUrl} target="_blank" rel="noreferrer" className="text-xs text-neutral-400 hover:text-neutral-900">Kalender</a>}
                       </div>
                     )}
                   </div>
@@ -296,17 +296,17 @@ function Field({ label, ...props }) {
     <div>
       <label className="block text-[11px] uppercase tracking-wider text-neutral-500 mb-1">{label}</label>
       <input {...props}
-        className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-500 transition-colors" />
+        className="w-full bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-2 text-sm text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-neutral-400 transition-colors" />
     </div>
   );
 }
 
 function Toggle({ label, value, onChange }) {
   return (
-    <div className="flex items-center justify-between py-2.5 border-b border-neutral-800 last:border-0">
-      <p className="text-sm text-neutral-300">{label}</p>
+    <div className="flex items-center justify-between py-2.5 border-b border-neutral-100 last:border-0">
+      <p className="text-sm text-neutral-700">{label}</p>
       <button onClick={() => onChange(!value)}
-        className={`w-9 h-5 rounded-full transition-colors relative ${value ? "bg-primary" : "bg-neutral-700"}`}>
+        className={`w-9 h-5 rounded-full transition-colors relative ${value ? "bg-primary" : "bg-neutral-300"}`}>
         <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all`}
               style={{ left: value ? "1.25rem" : "0.125rem" }} />
       </button>
@@ -379,7 +379,7 @@ function Settings({ user }) {
           <Field label="Email" type="email" value={profile.email} onChange={e => setProfile(p=>({...p,email:e.target.value}))} />
           <Field label="Telepon" type="tel" value={profile.phone} onChange={e => setProfile(p=>({...p,phone:e.target.value}))} />
           <Msg {...(profileMsg ?? { ok:true, text:"" })} />
-          <button type="submit" className="w-full bg-white text-black text-xs font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors">
+          <button type="submit" className="w-full bg-neutral-900 text-white text-xs font-semibold py-2 rounded-lg hover:bg-neutral-700 transition-colors">
             Simpan
           </button>
         </form>
@@ -397,7 +397,7 @@ function Settings({ user }) {
             Tampilkan
           </label>
           <Msg {...(pwMsg ?? { ok:true, text:"" })} />
-          <button type="submit" className="w-full bg-white text-black text-xs font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors">
+          <button type="submit" className="w-full bg-neutral-900 text-white text-xs font-semibold py-2 rounded-lg hover:bg-neutral-700 transition-colors">
             Ubah
           </button>
         </form>
@@ -407,7 +407,7 @@ function Settings({ user }) {
       <div className={`${CARD} p-5`}>
         <SectionTitle>Autentikasi Dua Faktor</SectionTitle>
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm text-neutral-300">Status</p>
+          <p className="text-sm text-neutral-700">Status</p>
           <Badge status={twoFA ? "active" : "cancelled"} />
         </div>
         {tfaStep === 1 && (
@@ -415,8 +415,8 @@ function Settings({ user }) {
             <input type="text" maxLength={6} value={otp}
               onChange={e => setOtp(e.target.value.replace(/\D/g,""))}
               placeholder="6-digit OTP"
-              className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white text-center tracking-widest focus:outline-none focus:border-neutral-500 transition-colors" />
-            <button type="submit" className="w-full bg-white text-black text-xs font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors">
+              className="w-full bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-2 text-sm text-neutral-800 text-center tracking-widest focus:outline-none focus:border-neutral-400 transition-colors" />
+            <button type="submit" className="w-full bg-neutral-900 text-white text-xs font-semibold py-2 rounded-lg hover:bg-neutral-700 transition-colors">
               Verifikasi
             </button>
           </form>
@@ -424,7 +424,7 @@ function Settings({ user }) {
         <Msg {...(tfaMsg ?? { ok:true, text:"" })} />
         {tfaStep !== 1 && (
           <button onClick={toggleTfa}
-            className="w-full mt-3 border border-neutral-700 hover:border-neutral-500 text-xs text-neutral-300 hover:text-white py-2 rounded-lg transition-colors">
+            className="w-full mt-3 border border-neutral-200 hover:border-neutral-400 text-xs text-neutral-600 hover:text-neutral-900 py-2 rounded-lg transition-colors">
             {twoFA ? "Nonaktifkan 2FA" : "Aktifkan 2FA"}
           </button>
         )}
@@ -445,18 +445,9 @@ function Settings({ user }) {
 
 // ── Per-tab visual containers ─────────────────────────────────────────────────
 const TAB_WRAP = {
-  overview: {
-    style: { background: "radial-gradient(ellipse 90% 45% at 50% -5%, rgba(232,65,30,0.08) 0%, #0d0d0d 65%)" },
-    cls: "rounded-2xl p-5 md:p-6",
-  },
-  tickets: {
-    style: { background: "linear-gradient(145deg, #080c18 0%, #0b0b10 100%)" },
-    cls: "rounded-2xl p-5 md:p-6 border-l-2 border-secondary/30",
-  },
-  settings: {
-    style: { background: "linear-gradient(145deg, #07100a 0%, #0c0c0c 100%)" },
-    cls: "rounded-2xl p-5 md:p-6 border-t border-emerald-900/30",
-  },
+  overview: { style: {}, cls: "rounded-2xl p-5 md:p-6" },
+  tickets:  { style: {}, cls: "rounded-2xl p-5 md:p-6" },
+  settings: { style: {}, cls: "rounded-2xl p-5 md:p-6" },
 };
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -485,10 +476,10 @@ export default function UserDashboard() {
   return (
     <>
       <Head><title>Dashboard – TiketKu</title></Head>
-      <DashboardLayout title="Dashboard" variant="dark">
+      <DashboardLayout title="Dashboard">
         {loading ? (
           <div className="grid grid-cols-3 gap-3">
-            {[...Array(3)].map((_,i) => <div key={i} className="bg-neutral-900 rounded-xl h-20 animate-pulse" />)}
+            {[...Array(3)].map((_,i) => <div key={i} className="bg-neutral-100 rounded-xl h-20 animate-pulse" />)}
           </div>
         ) : (
           <div className={wrap.cls} style={wrap.style}>
