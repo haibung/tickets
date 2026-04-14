@@ -63,7 +63,7 @@ const WITHDRAWAL_INIT = [
 const IDR = (n) =>
   new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(n);
 
-const CARD = "bg-neutral-900 border border-neutral-800 rounded-xl";
+const CARD = "bg-white border border-neutral-200 rounded-xl shadow-sm";
 
 const STATUS_MAP = {
   active:    { dot: "bg-emerald-400", label: "Aktif" },
@@ -89,7 +89,7 @@ function validatePw(pw) {
 function Dot({ status }) {
   const s = STATUS_MAP[status] ?? STATUS_MAP.draft;
   return (
-    <span className="inline-flex items-center gap-1.5 text-[11px] text-neutral-400">
+    <span className="inline-flex items-center gap-1.5 text-[11px] text-neutral-500">
       <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
       {s.label}
     </span>
@@ -97,7 +97,7 @@ function Dot({ status }) {
 }
 
 function SecTitle({ children }) {
-  return <p className="text-[11px] uppercase tracking-widest text-neutral-500 mb-4">{children}</p>;
+  return <p className="text-[11px] uppercase tracking-widest text-neutral-400 mb-4">{children}</p>;
 }
 
 function Trend({ v }) {
@@ -115,7 +115,7 @@ function Field({ label, ...props }) {
       <label className="block text-[11px] uppercase tracking-wider text-neutral-500 mb-1">{label}</label>
       <input
         {...props}
-        className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-500 transition-colors"
+        className="w-full bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-2 text-sm text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-neutral-400 transition-colors"
       />
     </div>
   );
@@ -151,7 +151,7 @@ function Analytics() {
         ].map((k) => (
           <div key={k.label} className={`${CARD} p-4`}>
             <p className="text-[11px] uppercase tracking-wider text-neutral-500 mb-1">{k.label}</p>
-            <p className="text-xl font-bold text-white mb-1">{k.value}</p>
+            <p className="text-xl font-bold text-neutral-900 mb-1">{k.value}</p>
             <Trend v={k.growth} />
           </div>
         ))}
@@ -161,10 +161,10 @@ function Analytics() {
         <div className="flex items-center justify-between mb-4">
           <SecTitle>Tren Penjualan 30 Hari</SecTitle>
           <div className="flex gap-2">
-            <button onClick={exportCSV} className="text-[11px] border border-neutral-700 text-neutral-400 hover:text-white hover:border-neutral-500 px-3 py-1 rounded-lg transition-colors">
+            <button onClick={exportCSV} className="text-[11px] border border-neutral-200 text-neutral-500 hover:text-neutral-900 hover:border-neutral-400 px-3 py-1 rounded-lg transition-colors">
               {"\u2193"} CSV
             </button>
-            <button className="text-[11px] border border-neutral-700 text-neutral-400 hover:text-white hover:border-neutral-500 px-3 py-1 rounded-lg transition-colors">
+            <button className="text-[11px] border border-neutral-200 text-neutral-500 hover:text-neutral-900 hover:border-neutral-400 px-3 py-1 rounded-lg transition-colors">
               {"\u2193"} PDF
             </button>
           </div>
@@ -175,7 +175,7 @@ function Analytics() {
             return <rect key={i} x={i * barW + 0.3} y={80 - h} width={barW - 0.6} height={h} fill="#e8411e" opacity="0.6" rx="1" />;
           })}
         </svg>
-        <div className="flex justify-between mt-1 text-[10px] text-neutral-600">
+        <div className="flex justify-between mt-1 text-[10px] text-neutral-400">
           <span>1</span><span>10</span><span>20</span><span>30</span>
         </div>
       </div>
@@ -185,27 +185,27 @@ function Analytics() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-[11px] uppercase tracking-wider text-neutral-600 border-b border-neutral-800">
+              <tr className="text-[11px] uppercase tracking-wider text-neutral-500 border-b border-neutral-200">
                 <th className="px-5 py-3 text-left">Kategori</th>
                 <th className="px-5 py-3 text-left">Terjual</th>
                 <th className="px-5 py-3 text-left">% Terjual</th>
                 <th className="px-5 py-3 text-left">Revenue</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-800">
+            <tbody className="divide-y divide-neutral-100">
               {BREAKDOWN.map((r) => (
-                <tr key={r.category} className="hover:bg-neutral-800/40 transition-colors">
-                  <td className="px-5 py-3 text-neutral-300 font-medium">{r.category}</td>
-                  <td className="px-5 py-3 text-neutral-400">{r.sold.toLocaleString()} / {r.total.toLocaleString()}</td>
+                <tr key={r.category} className="hover:bg-neutral-50 transition-colors">
+                  <td className="px-5 py-3 text-neutral-800 font-medium">{r.category}</td>
+                  <td className="px-5 py-3 text-neutral-500">{r.sold.toLocaleString()} / {r.total.toLocaleString()}</td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-20 h-1.5 bg-neutral-700 rounded-full overflow-hidden">
+                      <div className="w-20 h-1.5 bg-neutral-200 rounded-full overflow-hidden">
                         <div className="h-full bg-primary rounded-full" style={{ width: `${Math.round((r.sold / r.total) * 100)}%` }} />
                       </div>
                       <span className="text-[11px] text-neutral-500">{Math.round((r.sold / r.total) * 100)}%</span>
                     </div>
                   </td>
-                  <td className="px-5 py-3 text-white font-medium">{IDR(r.revenue)}</td>
+                  <td className="px-5 py-3 text-neutral-900 font-medium">{IDR(r.revenue)}</td>
                 </tr>
               ))}
             </tbody>
@@ -219,10 +219,10 @@ function Analytics() {
           {FUNNEL.map((f, i) => (
             <div key={f.step}>
               <div className="flex justify-between text-[12px] mb-1">
-                <span className="text-neutral-400">{f.step}</span>
-                <span className="text-neutral-300">{f.count.toLocaleString()}</span>
+                <span className="text-neutral-600">{f.step}</span>
+                <span className="text-neutral-800">{f.count.toLocaleString()}</span>
               </div>
-              <div className="h-1.5 bg-neutral-800 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-neutral-100 rounded-full overflow-hidden">
                 <div className="h-full bg-primary rounded-full" style={{ width: `${(f.count / FUNNEL[0].count) * 100}%`, opacity: 1 - i * 0.12 }} />
               </div>
             </div>
@@ -273,7 +273,7 @@ function Events() {
             <div>
               <label className="block text-[11px] uppercase tracking-wider text-neutral-500 mb-1">Deskripsi</label>
               <textarea rows={3} value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-500 resize-none" />
+                className="w-full bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-2 text-sm text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-neutral-400 resize-none" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Field label="Highlights" value={form.highlights} onChange={(e) => setForm((f) => ({ ...f, highlights: e.target.value }))} placeholder="Pisahkan dengan koma" />
@@ -287,9 +287,9 @@ function Events() {
               ].map((f) => (
                 <div key={f.key}>
                   <label className="block text-[11px] uppercase tracking-wider text-neutral-500 mb-1">{f.label}</label>
-                  <label className="flex flex-col items-center justify-center border border-dashed border-neutral-700 rounded-xl p-4 cursor-pointer hover:border-neutral-500 transition-colors text-center">
+                  <label className="flex flex-col items-center justify-center border border-dashed border-neutral-300 rounded-xl p-4 cursor-pointer hover:border-neutral-400 transition-colors text-center">
                     <span className="text-2xl mb-1">📂</span>
-                    <span className="text-[11px] text-neutral-500 truncate max-w-full px-1">{files[f.key] ? files[f.key].name : "Pilih file"}</span>
+                    <span className="text-[11px] text-neutral-400 truncate max-w-full px-1">{files[f.key] ? files[f.key].name : "Pilih file"}</span>
                     <input type="file" accept={f.accept} className="hidden" onChange={(e) => setFiles((p) => ({ ...p, [f.key]: e.target.files[0] ?? null }))} />
                   </label>
                 </div>
@@ -299,7 +299,7 @@ function Events() {
               <div className="flex items-center justify-between mb-2">
                 <label className="text-[11px] uppercase tracking-wider text-neutral-500">Artist Lineup</label>
                 <button type="button" onClick={() => setArtists((a) => [...a, { name: "", type: "Local", time: "" }])}
-                  className="text-[11px] text-neutral-400 hover:text-white border border-neutral-700 px-2 py-0.5 rounded transition-colors">
+                  className="text-[11px] text-neutral-500 hover:text-neutral-900 border border-neutral-200 px-2 py-0.5 rounded transition-colors">
                   + Tambah
                 </button>
               </div>
@@ -307,19 +307,19 @@ function Events() {
                 {artists.map((a, i) => (
                   <div key={i} className="grid grid-cols-3 gap-2">
                     <input value={a.name} onChange={(e) => setArtists((ar) => ar.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)))}
-                      placeholder="Nama artist" className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none" />
+                      placeholder="Nama artist" className="bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-1.5 text-sm text-neutral-800 focus:outline-none" />
                     <select value={a.type} onChange={(e) => setArtists((ar) => ar.map((x, j) => (j === i ? { ...x, type: e.target.value } : x)))}
-                      className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-1.5 text-sm text-neutral-300 focus:outline-none">
+                      className="bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-1.5 text-sm text-neutral-700 focus:outline-none">
                       {["Headliner", "International", "Local"].map((t) => <option key={t}>{t}</option>)}
                     </select>
                     <input type="time" value={a.time} onChange={(e) => setArtists((ar) => ar.map((x, j) => (j === i ? { ...x, time: e.target.value } : x)))}
-                      className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-1.5 text-sm text-neutral-300 focus:outline-none" />
+                      className="bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-1.5 text-sm text-neutral-700 focus:outline-none" />
                   </div>
                 ))}
               </div>
             </div>
             <div className="flex gap-3">
-              <button type="button" onClick={() => setShowForm(false)} className="flex-1 border border-neutral-700 text-neutral-400 hover:text-white py-2 rounded-lg text-sm transition-colors">Batal</button>
+              <button type="button" onClick={() => setShowForm(false)} className="flex-1 border border-neutral-300 text-neutral-500 hover:text-neutral-900 py-2 rounded-lg text-sm transition-colors">Batal</button>
               <button type="submit" className="flex-1 bg-white text-black text-xs font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors">Simpan sebagai Draft</button>
             </div>
           </form>
@@ -330,13 +330,13 @@ function Events() {
         {events.map((ev) => (
           <div key={ev.id} className={`${CARD} p-4 flex items-center justify-between gap-4`}>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white truncate">{ev.name}</p>
+              <p className="text-sm font-semibold text-neutral-900 truncate">{ev.name}</p>
               <p className="text-[11px] text-neutral-500 mt-0.5">{ev.date} · {ev.id}</p>
             </div>
             <div className="flex items-center gap-4 flex-shrink-0">
               <div className="text-right hidden sm:block">
-                <p className="text-xs text-neutral-400">{ev.sold.toLocaleString()} / {ev.capacity.toLocaleString()}</p>
-                <div className="w-20 h-1 bg-neutral-700 rounded mt-1">
+                <p className="text-xs text-neutral-500">{ev.sold.toLocaleString()} / {ev.capacity.toLocaleString()}</p>
+                <div className="w-20 h-1 bg-neutral-200 rounded mt-1">
                   <div className="h-full bg-primary rounded" style={{ width: `${(ev.sold / ev.capacity) * 100}%` }} />
                 </div>
               </div>
@@ -378,12 +378,12 @@ function Tickets() {
           <div key={t.id} className={`${CARD} p-4`}>
             <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
               <div>
-                <p className="text-sm font-semibold text-white">{t.category}</p>
+                <p className="text-sm font-semibold text-neutral-900">{t.category}</p>
                 <p className="text-[11px] text-neutral-500">{t.event} · {t.id}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Dot status={t.active ? "active" : "inactive"} />
-                <button onClick={() => toggleActive(t.id)} className="text-[11px] border border-neutral-700 text-neutral-400 hover:text-white px-2 py-0.5 rounded transition-colors">
+                <button onClick={() => toggleActive(t.id)} className="text-[11px] border border-neutral-200 text-neutral-500 hover:text-neutral-900 px-2 py-0.5 rounded transition-colors">
                   {t.active ? "Nonaktifkan" : "Aktifkan"}
                 </button>
               </div>
@@ -391,8 +391,8 @@ function Tickets() {
             <div className="grid grid-cols-3 gap-3 text-center mb-3">
               {[{ label: "Harga", value: IDR(t.price) }, { label: "Kuota", value: t.quota.toLocaleString() }, { label: "Terjual", value: t.sold.toLocaleString() }].map((c) => (
                 <div key={c.label} className={`${CARD} py-2`}>
-                  <p className="text-[10px] text-neutral-600 mb-0.5">{c.label}</p>
-                  <p className="text-sm font-bold text-white">{c.value}</p>
+                  <p className="text-[10px] text-neutral-500 mb-0.5">{c.label}</p>
+                  <p className="text-sm font-bold text-neutral-900">{c.value}</p>
                 </div>
               ))}
             </div>
@@ -400,18 +400,18 @@ function Tickets() {
               <div className="flex gap-2 flex-wrap">
                 <div className="flex gap-1 flex-1 min-w-0">
                   <input value={delta} onChange={(e) => setDelta(e.target.value)} type="number" placeholder="Tambah kuota"
-                    className="flex-1 min-w-0 bg-neutral-800 border border-neutral-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none" />
-                  <button onClick={() => restock(t.id)} className="text-xs bg-white text-black px-3 py-1.5 rounded-lg font-semibold flex-shrink-0">Restock</button>
+                    className="flex-1 min-w-0 bg-neutral-50 border border-neutral-300 rounded-lg px-2 py-1.5 text-xs text-neutral-800 focus:outline-none" />
+                  <button onClick={() => restock(t.id)} className="text-xs bg-neutral-900 text-white px-3 py-1.5 rounded-lg font-semibold flex-shrink-0 hover:bg-neutral-700 transition-colors">Restock</button>
                 </div>
                 <div className="flex gap-1 flex-1 min-w-0">
                   <input value={newPrice} onChange={(e) => setNewPrice(e.target.value)} type="number" placeholder="Harga baru"
-                    className="flex-1 min-w-0 bg-neutral-800 border border-neutral-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none" />
-                  <button onClick={() => changePrice(t.id)} className="text-xs bg-white text-black px-3 py-1.5 rounded-lg font-semibold flex-shrink-0">Update</button>
+                    className="flex-1 min-w-0 bg-neutral-50 border border-neutral-300 rounded-lg px-2 py-1.5 text-xs text-neutral-800 focus:outline-none" />
+                  <button onClick={() => changePrice(t.id)} className="text-xs bg-neutral-900 text-white px-3 py-1.5 rounded-lg font-semibold flex-shrink-0 hover:bg-neutral-700 transition-colors">Update</button>
                 </div>
-                <button onClick={() => setEditId(null)} className="text-xs text-neutral-500 hover:text-white transition-colors px-2">Batal</button>
+                <button onClick={() => setEditId(null)} className="text-xs text-neutral-400 hover:text-neutral-700 transition-colors px-2">Batal</button>
               </div>
             ) : (
-              <button onClick={() => setEditId(t.id)} className="text-[11px] border border-neutral-700 text-neutral-400 hover:text-white hover:border-neutral-500 px-3 py-1.5 rounded-lg transition-colors">
+              <button onClick={() => setEditId(t.id)} className="text-[11px] border border-neutral-200 text-neutral-500 hover:text-neutral-900 hover:border-neutral-400 px-3 py-1.5 rounded-lg transition-colors">
                 Edit Kuota & Harga
               </button>
             )}
@@ -451,33 +451,33 @@ function Scanner() {
       <SecTitle>QR Check-in Scanner</SecTitle>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className={`${CARD} p-5 space-y-4`}>
-          <p className="text-xs text-neutral-400">Input Manual / Auto-scan</p>
+          <p className="text-xs text-neutral-500">Input Manual / Auto-scan</p>
           <form onSubmit={scan} className="flex gap-2">
             <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Masukkan kode QR..."
-              className="flex-1 bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500" />
-            <button type="submit" className="bg-white text-black text-xs font-semibold px-4 rounded-lg hover:bg-neutral-200 transition-colors">Scan</button>
+              className="flex-1 bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-2 text-sm text-neutral-800 focus:outline-none focus:border-neutral-400" />
+            <button type="submit" className="bg-neutral-900 text-white text-xs font-semibold px-4 rounded-lg hover:bg-neutral-700 transition-colors">Scan</button>
           </form>
           {result && (
-            <div className={`text-sm font-medium px-3 py-2 rounded-lg border ${result.ok ? "bg-emerald-900/40 text-emerald-400 border-emerald-800" : "bg-red-900/40 text-red-400 border-red-900"}`}>
+            <div className={`text-sm font-medium px-3 py-2 rounded-lg border ${result.ok ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-red-50 text-red-600 border-red-200"}`}>
               {result.msg}
             </div>
           )}
-          <div className="border border-dashed border-neutral-700 rounded-xl flex flex-col items-center justify-center py-8 text-center text-neutral-600">
+          <div className="border border-dashed border-neutral-200 rounded-xl flex flex-col items-center justify-center py-8 text-center text-neutral-400">
             <span className="text-3xl mb-2">📷</span>
             <p className="text-xs">Kamera Scanner (PWA)</p>
             <p className="text-[11px] mt-0.5">Tersedia di perangkat mobile</p>
           </div>
         </div>
         <div className={`${CARD} p-5 flex flex-col`}>
-          <p className="text-xs text-neutral-400 mb-3">Log Check-in ({log.length} tamu)</p>
+          <p className="text-xs text-neutral-500 mb-3">Log Check-in ({log.length} tamu)</p>
           <div className="flex-1 overflow-y-auto space-y-2 max-h-72">
             {log.map((entry, i) => (
-              <div key={i} className="flex items-center justify-between border border-neutral-800 rounded-lg px-3 py-2">
+              <div key={i} className="flex items-center justify-between border border-neutral-100 rounded-lg px-3 py-2">
                 <div>
-                  <p className="text-xs font-medium text-white">{entry.name}</p>
+                  <p className="text-xs font-medium text-neutral-900">{entry.name}</p>
                   <p className="text-[11px] text-neutral-500">{entry.ticket}</p>
                 </div>
-                <span className="text-[11px] text-neutral-600 font-mono">{entry.time}</span>
+                <span className="text-[11px] text-neutral-400 font-mono">{entry.time}</span>
               </div>
             ))}
           </div>
@@ -530,8 +530,8 @@ function Wallet() {
         ].map((c) => (
           <div key={c.label} className={`${CARD} p-4`}>
             <p className="text-[11px] uppercase tracking-wider text-neutral-500 mb-1">{c.label}</p>
-            <p className="text-lg font-bold text-white">{c.value}</p>
-            <p className="text-[11px] text-neutral-600 mt-0.5">{c.note}</p>
+            <p className="text-lg font-bold text-neutral-900">{c.value}</p>
+            <p className="text-[11px] text-neutral-400 mt-0.5">{c.note}</p>
           </div>
         ))}
       </div>
@@ -542,7 +542,7 @@ function Wallet() {
             <SecTitle>Pengajuan Pencairan</SecTitle>
             <p className="text-sm text-neutral-500 mb-4">Cairkan saldo ke rekening bank. Biaya platform 5% + PPh 2% dipotong otomatis.</p>
             <button onClick={() => setStep(1)} disabled={balance.available <= 0}
-              className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors ${balance.available > 0 ? "bg-white text-black hover:bg-neutral-200" : "bg-neutral-800 text-neutral-500 cursor-not-allowed"}`}>
+              className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors ${balance.available > 0 ? "bg-neutral-900 text-white hover:bg-neutral-700" : "bg-neutral-100 text-neutral-400 cursor-not-allowed"}`}>
               Ajukan Pencairan
             </button>
           </>
@@ -558,17 +558,17 @@ function Wallet() {
                 <Field label="Nama Pemilik Rekening" value={form.holder} onChange={(e) => setForm((f) => ({ ...f, holder: e.target.value }))} placeholder="Nama lengkap" required />
               </div>
               {amt > 0 && (
-                <div className="bg-neutral-800/60 rounded-lg p-4 text-sm space-y-1.5">
-                  <div className="flex justify-between text-neutral-400"><span>Jumlah Bruto</span><span>{IDR(amt)}</span></div>
+                <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 text-sm space-y-1.5">
+                  <div className="flex justify-between text-neutral-600"><span>Jumlah Bruto</span><span>{IDR(amt)}</span></div>
                   <div className="flex justify-between text-neutral-500"><span>Platform Fee (5%)</span><span>\u2013 {IDR(platform)}</span></div>
                   <div className="flex justify-between text-neutral-500"><span>PPh 2%</span><span>\u2013 {IDR(tax)}</span></div>
-                  <div className="flex justify-between text-white font-semibold border-t border-neutral-700 pt-2"><span>Yang Diterima</span><span>{IDR(net)}</span></div>
+                  <div className="flex justify-between text-neutral-900 font-semibold border-t border-neutral-200 pt-2"><span>Yang Diterima</span><span>{IDR(net)}</span></div>
                 </div>
               )}
               <Msg ok={msg?.ok} text={msg?.text} />
               <div className="flex gap-3">
-                <button type="button" onClick={reset} className="flex-1 border border-neutral-700 text-neutral-400 hover:text-white py-2 rounded-lg text-sm transition-colors">Batal</button>
-                <button type="submit" className="flex-1 bg-white text-black text-sm font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors">Verifikasi OTP</button>
+                <button type="button" onClick={reset} className="flex-1 border border-neutral-300 text-neutral-500 hover:text-neutral-900 py-2 rounded-lg text-sm transition-colors">Batal</button>
+                <button type="submit" className="flex-1 bg-neutral-900 text-white text-sm font-semibold py-2 rounded-lg hover:bg-neutral-700 transition-colors">Verifikasi OTP</button>
               </div>
             </form>
           </>
@@ -579,11 +579,11 @@ function Wallet() {
             <p className="text-sm text-neutral-500 mb-4">Masukkan 6 digit OTP yang dikirim ke email terdaftar.</p>
             <form onSubmit={submitOtp} className="space-y-3">
               <input value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} maxLength={6} placeholder="6-digit OTP"
-                className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-lg text-white text-center tracking-[0.3em] focus:outline-none focus:border-neutral-500" />
+                className="w-full bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-2 text-lg text-neutral-800 text-center tracking-[0.3em] focus:outline-none focus:border-neutral-400" />
               <Msg ok={msg?.ok} text={msg?.text} />
               <div className="flex gap-3">
-                <button type="button" onClick={() => { setStep(1); setMsg(null); }} className="flex-1 border border-neutral-700 text-neutral-400 hover:text-white py-2 rounded-lg text-sm transition-colors">Kembali</button>
-                <button type="submit" className="flex-1 bg-white text-black text-sm font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors">Konfirmasi</button>
+                <button type="button" onClick={() => { setStep(1); setMsg(null); }} className="flex-1 border border-neutral-300 text-neutral-500 hover:text-neutral-900 py-2 rounded-lg text-sm transition-colors">Kembali</button>
+                <button type="submit" className="flex-1 bg-neutral-900 text-white text-sm font-semibold py-2 rounded-lg hover:bg-neutral-700 transition-colors">Konfirmasi</button>
               </div>
             </form>
           </>
@@ -591,9 +591,9 @@ function Wallet() {
         {step === 3 && (
           <div className="text-center py-4">
             <p className="text-3xl mb-3">\u2705</p>
-            <p className="text-sm font-semibold text-white mb-1">Pencairan Diajukan</p>
+            <p className="text-sm font-semibold text-neutral-900 mb-1">Pencairan Diajukan</p>
             <p className="text-xs text-neutral-500 mb-4">Diproses dalam 2\u20133 hari kerja.</p>
-            <button onClick={reset} className="text-xs border border-neutral-700 text-neutral-400 hover:text-white px-4 py-2 rounded-lg transition-colors">Selesai</button>
+            <button onClick={reset} className="text-xs border border-neutral-200 text-neutral-500 hover:text-neutral-900 px-4 py-2 rounded-lg transition-colors">Selesai</button>
           </div>
         )}
       </div>
@@ -603,7 +603,7 @@ function Wallet() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-[11px] uppercase tracking-wider text-neutral-600 border-b border-neutral-800">
+              <tr className="text-[11px] uppercase tracking-wider text-neutral-500 border-b border-neutral-200">
                 <th className="px-5 py-3 text-left">ID</th>
                 <th className="px-5 py-3 text-left">Jumlah</th>
                 <th className="px-5 py-3 text-left">Bank</th>
@@ -611,14 +611,14 @@ function Wallet() {
                 <th className="px-5 py-3 text-left">Tanggal</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-800">
+            <tbody className="divide-y divide-neutral-100">
               {history.map((r) => (
-                <tr key={r.id} className="hover:bg-neutral-800/40 transition-colors">
-                  <td className="px-5 py-3 font-mono text-xs text-neutral-500">{r.id}</td>
-                  <td className="px-5 py-3 text-white font-medium">{IDR(r.amount)}</td>
-                  <td className="px-5 py-3 text-neutral-400">{r.bank}</td>
+                <tr key={r.id} className="hover:bg-neutral-50 transition-colors">
+                  <td className="px-5 py-3 font-mono text-xs text-neutral-400">{r.id}</td>
+                  <td className="px-5 py-3 text-neutral-900 font-medium">{IDR(r.amount)}</td>
+                  <td className="px-5 py-3 text-neutral-500">{r.bank}</td>
                   <td className="px-5 py-3"><Dot status={r.status} /></td>
-                  <td className="px-5 py-3 text-neutral-500 tabular-nums">{r.date}</td>
+                  <td className="px-5 py-3 text-neutral-400 tabular-nums">{r.date}</td>
                 </tr>
               ))}
             </tbody>
@@ -681,10 +681,10 @@ function OrgSettings({ user }) {
             <div>
               <label className="block text-[11px] uppercase tracking-wider text-neutral-500 mb-1">Bio</label>
               <textarea rows={2} value={profile.bio} onChange={(e) => setProfile((p) => ({ ...p, bio: e.target.value }))}
-                className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-neutral-500 resize-none" />
+                className="w-full bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-2 text-sm text-neutral-800 placeholder-neutral-400 focus:outline-none focus:border-neutral-400 resize-none" />
             </div>
             <Msg ok={profileMsg?.ok} text={profileMsg?.text} />
-            <button type="submit" className="w-full bg-white text-black text-xs font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors">Simpan</button>
+            <button type="submit" className="w-full bg-neutral-900 text-white text-xs font-semibold py-2 rounded-lg hover:bg-neutral-700 transition-colors">Simpan</button>
           </form>
         </div>
 
@@ -698,26 +698,26 @@ function OrgSettings({ user }) {
               <input type="checkbox" checked={showPw} onChange={(e) => setShowPw(e.target.checked)} className="accent-primary" /> Tampilkan
             </label>
             <Msg ok={pwMsg?.ok} text={pwMsg?.text} />
-            <button type="submit" className="w-full bg-white text-black text-xs font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors">Ubah</button>
+            <button type="submit" className="w-full bg-neutral-900 text-white text-xs font-semibold py-2 rounded-lg hover:bg-neutral-700 transition-colors">Ubah</button>
           </form>
         </div>
 
         <div className={`${CARD} p-5`}>
           <SecTitle>Autentikasi Dua Faktor</SecTitle>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-neutral-300">Status</p>
+            <p className="text-sm text-neutral-700">Status</p>
             <Dot status={twoFA ? "active" : "inactive"} />
           </div>
           {tfaStep === 1 && (
             <form onSubmit={verifyOtp} className="space-y-3 mb-3">
               <input type="text" maxLength={6} value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))} placeholder="6-digit OTP"
-                className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white text-center tracking-widest focus:outline-none focus:border-neutral-500" />
-              <button type="submit" className="w-full bg-white text-black text-xs font-semibold py-2 rounded-lg hover:bg-neutral-200 transition-colors">Verifikasi</button>
+                className="w-full bg-neutral-50 border border-neutral-300 rounded-lg px-3 py-2 text-sm text-neutral-800 text-center tracking-widest focus:outline-none focus:border-neutral-400" />
+              <button type="submit" className="w-full bg-neutral-900 text-white text-xs font-semibold py-2 rounded-lg hover:bg-neutral-700 transition-colors">Verifikasi</button>
             </form>
           )}
           <Msg ok={tfaMsg?.ok} text={tfaMsg?.text} />
           {tfaStep !== 1 && (
-            <button onClick={toggleTfa} className="w-full mt-3 border border-neutral-700 hover:border-neutral-500 text-xs text-neutral-300 hover:text-white py-2 rounded-lg transition-colors">
+            <button onClick={toggleTfa} className="w-full mt-3 border border-neutral-200 hover:border-neutral-400 text-xs text-neutral-600 hover:text-neutral-900 py-2 rounded-lg transition-colors">
               {twoFA ? "Nonaktifkan 2FA" : "Aktifkan 2FA"}
             </button>
           )}
@@ -731,9 +731,9 @@ function OrgSettings({ user }) {
               { label: "Foto Formal",           accept: "image/*" },
               { label: "Legalitas Perusahaan",  accept: ".pdf" },
             ].map((d) => (
-              <div key={d.label} className="flex items-center justify-between border border-neutral-800 rounded-lg px-4 py-3">
-                <p className="text-sm text-neutral-300">{d.label}</p>
-                <label className="text-[11px] border border-neutral-700 text-neutral-400 hover:text-white px-3 py-1 rounded-lg cursor-pointer transition-colors">
+              <div key={d.label} className="flex items-center justify-between border border-neutral-100 rounded-lg px-4 py-3">
+                <p className="text-sm text-neutral-700">{d.label}</p>
+                <label className="text-[11px] border border-neutral-200 text-neutral-500 hover:text-neutral-900 px-3 py-1 rounded-lg cursor-pointer transition-colors">
                   Upload
                   <input type="file" accept={d.accept} className="hidden" />
                 </label>
@@ -748,12 +748,12 @@ function OrgSettings({ user }) {
 
 // ── Per-tab background containers ─────────────────────────────────────────────
 const TAB_WRAP = {
-  analytics: { style: { background: "radial-gradient(ellipse 90% 40% at 50% -5%, rgba(232,65,30,0.07) 0%, #0d0d0d 60%)" }, cls: "rounded-2xl p-5 md:p-6" },
-  events:    { style: { background: "linear-gradient(145deg, #080c18 0%, #0b0b10 100%)" },                                   cls: "rounded-2xl p-5 md:p-6 border-l-2 border-secondary/30" },
-  tickets:   { style: { background: "linear-gradient(145deg, #0e0810 0%, #0d0d0d 100%)" },                                   cls: "rounded-2xl p-5 md:p-6 border-l-2 border-purple-900/40" },
-  scanner:   { style: { background: "linear-gradient(145deg, #07100a 0%, #0c0c0c 100%)" },                                   cls: "rounded-2xl p-5 md:p-6 border-t border-emerald-900/30" },
-  wallet:    { style: { background: "linear-gradient(145deg, #0f0f0a 0%, #0d0d0d 100%)" },                                   cls: "rounded-2xl p-5 md:p-6 border-l-2 border-neutral-700/40" },
-  settings:  { style: { background: "#0d0d0d" },                                                                             cls: "rounded-2xl p-5 md:p-6" },
+  analytics: { style: {}, cls: "rounded-2xl p-5 md:p-6" },
+  events:    { style: {}, cls: "rounded-2xl p-5 md:p-6" },
+  tickets:   { style: {}, cls: "rounded-2xl p-5 md:p-6" },
+  scanner:   { style: {}, cls: "rounded-2xl p-5 md:p-6" },
+  wallet:    { style: {}, cls: "rounded-2xl p-5 md:p-6" },
+  settings:  { style: {}, cls: "rounded-2xl p-5 md:p-6" },
 };
 
 const TAB_TITLES = {
@@ -787,10 +787,10 @@ export default function OrganizerDashboard() {
   return (
     <>
       <Head><title>{TAB_TITLES[tab] ?? "Creator Dashboard"} \u2013 TiketKu</title></Head>
-      <DashboardLayout title={TAB_TITLES[tab] ?? "Creator Dashboard"} variant="dark">
+      <DashboardLayout title={TAB_TITLES[tab] ?? "Creator Dashboard"}>
         {loading ? (
           <div className="grid grid-cols-3 gap-3">
-            {[...Array(3)].map((_, i) => <div key={i} className="bg-neutral-900 rounded-xl h-20 animate-pulse" />)}
+            {[...Array(3)].map((_, i) => <div key={i} className="bg-neutral-100 rounded-xl h-20 animate-pulse" />)}
           </div>
         ) : (
           <div className={wrap.cls} style={wrap.style}>

@@ -89,18 +89,18 @@ export default function DashboardLayout({ children, title, variant = "light" }) 
 
       {/* ── Sidebar ────────────────────────────────────────────────────────── */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-30 w-64 flex flex-col bg-neutral-900 text-white transition-transform duration-300 ${
+        className={`fixed lg:static inset-y-0 left-0 z-30 w-64 flex flex-col transition-transform duration-300 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        }`}
+        } ${isDark ? "bg-neutral-900 text-white" : "bg-white border-r border-neutral-200 text-neutral-800"}`}
       >
         {/* Brand */}
-        <div className="flex items-center justify-between px-6 h-16 border-b border-neutral-700 flex-shrink-0">
+        <div className={`flex items-center justify-between px-6 h-16 border-b flex-shrink-0 ${isDark ? "border-neutral-700" : "border-neutral-200"}`}>
           <Link href="/" className="text-xl font-extrabold">
             Tiket<span className="text-primary">Ku</span>
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-neutral-400 hover:text-white"
+            className={`lg:hidden ${isDark ? "text-neutral-400 hover:text-white" : "text-neutral-500 hover:text-neutral-900"}`}
             aria-label="Close sidebar"
           >
             ✕
@@ -108,11 +108,11 @@ export default function DashboardLayout({ children, title, variant = "light" }) 
         </div>
 
         {/* User info */}
-        <div className="px-6 py-4 border-b border-neutral-700 flex-shrink-0">
-          <p className="text-sm font-semibold text-white truncate">
+        <div className={`px-6 py-4 border-b flex-shrink-0 ${isDark ? "border-neutral-700" : "border-neutral-200"}`}>
+          <p className={`text-sm font-semibold truncate ${isDark ? "text-white" : "text-neutral-800"}`}>
             {user?.name ?? "Loading..."}
           </p>
-          <p className="text-xs text-neutral-400 truncate mb-2">
+          <p className={`text-xs truncate mb-2 ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>
             {user?.email ?? ""}
           </p>
           <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${badge.cls}`}>
@@ -130,7 +130,9 @@ export default function DashboardLayout({ children, title, variant = "light" }) 
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive(item.href)
                   ? "bg-primary text-white"
-                  : "text-neutral-300 hover:bg-neutral-700 hover:text-white"
+                  : isDark
+                  ? "text-neutral-300 hover:bg-neutral-700 hover:text-white"
+                  : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
               }`}
             >
               <span className="text-base">{item.icon}</span>
@@ -143,13 +145,13 @@ export default function DashboardLayout({ children, title, variant = "light" }) 
         <div className="px-4 pb-6 flex-shrink-0">
           <Link
             href="/"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors mb-1"
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors mb-1 ${isDark ? "text-neutral-300 hover:bg-neutral-700 hover:text-white" : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"}`}
           >
             <span>🏠</span> Back to Site
           </Link>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-neutral-300 hover:bg-red-700 hover:text-white transition-colors"
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${isDark ? "text-neutral-300 hover:bg-red-700 hover:text-white" : "text-neutral-500 hover:bg-red-50 hover:text-red-600"}`}
           >
             <span>🚪</span> Logout
           </button>
